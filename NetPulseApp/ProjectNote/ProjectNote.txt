@@ -1,47 +1,5 @@
 
 
-
-Read all Project Docs:
-C:\Users\Public\src\MS_Store_App\NetPulseApp\Doc
-
-
-
-I have created project: NetPulseApp, from my existing app. 
-Project Source:
-C:\Users\Public\src\MS_Store_App\NetPulseApp\NetPulseApp
-The goal is to build once, configure fast — so that spinning up a new app requires only editing a single central configuration file, with zero structural changes needed.
-
-
-
-Now you task is follow doc: 
-C:\Users\Public\src\MS_Store_App\NetPulseApp\Doc
-Specially: Project UI Structure.md
-
-And update project. Remove unused and extra code.
-Make this project 100% Desktop App Starter Template. 
-
-
-*If required write doc always here:
-C:\Users\Public\src\MS_Store_App\NetPulseApp\Doc
-
-
-- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
-- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
-- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
-- Preserve existing behavior unless the task requires otherwise.
-- Keep responses concise and report only important changes, affected files, and caveats.
-
-
-*******************************************************************************
-
-Now impropve title bar. make color difference 90 to 100, so that it can be easily distinguished from the rest of the app. 
-And improve sidebar top content position. three dot, icon and app name.
-
-*******************************************************************************
-
-
-Now review full project amd make sure it will be great starter template for desktop app. 
-And report me if any improvemnet list.
-
-*******************************************************************************
+Src:
+https://github.com/shahedbd/NetPulseApp
 
