@@ -35,6 +35,7 @@ namespace NetPulseApp.UserControls.Lib
         private (string Caption, int Width)[] _columnDefs = Array.Empty<(string, int)>();
         private string[] _columnCaptions = Array.Empty<string>();
         private bool _headerBold = true;
+        private bool _dpiImageListApplied;
 
         public ResultsTableControl()
         {
@@ -63,15 +64,29 @@ namespace NetPulseApp.UserControls.Lib
             // before it's parented (DeviceDpi still 96), so apply them once
             // the handle exists (DpiAwareService.Scale is deliberately inert,
             // see its ScaleFactor comment).
+            //
+            // Widths ONLY — never rebuild the Columns collection here.
+            // Clear()+Add() while the handle-creation sequence is still
+            // realizing the cached columns leaves the native header holding
+            // every column twice while Columns.Count stays 4. The phantom
+            // columns make the native control request subitems the rows
+            // don't have, and virtual-mode retrieval throws
+            // InvalidOperationException on every item fetch (the "app
+            // closes a few seconds after pressing Start" Ping crash).
+            // The image-list swap recreates the handle, so guard it against
+            // re-running on that second HandleCreated.
             HandleCreated += (s, e) =>
             {
                 float factor = DeviceDpi / 96f;
-                if (factor > 1.01f)
+                if (factor > 1.01f && !_dpiImageListApplied)
+                {
+                    _dpiImageListApplied = true;
                     SmallImageList = new ImageList
                     {
                         ImageSize = new Size(1, (int)Math.Round(RowHeight * factor))
                     };
-                ApplyColumnWidths();
+                }
+                UpdateColumnWidths();
             };
 
             ApplyTheme();
@@ -138,6 +153,13 @@ namespace NetPulseApp.UserControls.Lib
             var item = new ListViewItem(row.Cells[0]);
             for (int i = 1; i < row.Cells.Length; i++)
                 item.SubItems.Add(row.Cells[i]);
+
+            // Virtual-mode contract: the item must carry a SubItem for
+            // every column, or item retrieval throws when the native
+            // control asks for a column this row doesn't populate.
+            while (item.SubItems.Count < Columns.Count)
+                item.SubItems.Add(string.Empty);
+
             return item;
         }
 
@@ -209,6 +231,16 @@ namespace NetPulseApp.UserControls.Lib
             Columns.Clear();
             foreach (var (caption, width) in _columnDefs)
                 Columns.Add(caption, Px(width <= 0 ? 120 : width));
+            StretchLastColumn();
+        }
+
+        /// <summary>Re-applies the stored widths to the existing columns,
+        /// without touching collection membership (safe once the handle
+        /// exists — see the HandleCreated note in the constructor).</summary>
+        private void UpdateColumnWidths()
+        {
+            for (int i = 0; i < _columnDefs.Length && i < Columns.Count; i++)
+                Columns[i].Width = Px(_columnDefs[i].Width <= 0 ? 120 : _columnDefs[i].Width);
             StretchLastColumn();
         }
 
