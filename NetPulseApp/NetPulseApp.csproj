@@ -1,0 +1,132 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>NetPulseApp</AssemblyName>
+    <RootNamespace>NetPulseApp</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>Zero Byte Software Solutions, zerobytebd.com</Authors>
+    <Company>Zero Byte Software Solutions, zerobytebd.com</Company>
+    <Product>Desktop App Template</Product>
+    <Description>Reusable Windows Desktop application template — build once, configure fast via AppConfig.cs</Description>
+    <Copyright>Copyright © 2024 Zero Byte Software Solutions, zerobytebd.com. All rights reserved.</Copyright>
+    <PackageTags>winforms;desktop-app-template;starter-template</PackageTags>
+    <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
+
+    <!-- win-x86 is what WinAppPakaging.wapproj's AnyCPU build maps to (see
+         build-store-package.cmd, always -p:Platform=AnyCPU). A RID is also
+         mandatory for trimming. Unconditional on purpose — restore has to
+         see it, or a Release build after a Debug restore fails with
+         NETSDK1047. -->
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+
+    <!-- This template does no locale-sensitive formatting (no per-country
+         number/date display), so unlike apps that do, invariant globalization
+         costs nothing here and is a real chunk of the trimmed size. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PublishReadyToRun>false</PublishReadyToRun>
+
+    <!-- Windows Forms + trimming is unsupported/unanalyzed upstream and is a
+         hard build error without this: "Windows Forms is not supported or
+         recommended with trimming enabled." Suppressing it is the documented
+         way to trim a WinForms app anyway (see TrimMode=partial below for how
+         the actual risk is contained) — see
+         https://aka.ms/dotnet-illink/windows-forms. -->
+    <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+  </PropertyGroup>
+
+  <!-- Deployment shape for the shipping build. Release-scoped: SelfContained
+       copies the whole runtime into the output on every build, so leaving it
+       on for Debug would put ~100+ MB in bin and slow the F5 loop for nothing. -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <!-- Self-contained, stated explicitly. There is no Store framework
+         package for the .NET Desktop Runtime, so the MSIX must carry the
+         runtime or the app fails to launch on a machine that doesn't happen
+         to have .NET 10 installed. Trimming requires this too. -->
+    <SelfContained>true</SelfContained>
+
+    <!-- Loose files, not a single-file bundle. MSIX already packs and
+         compresses, so single-file buys nothing and costs twice: it extracts
+         on every launch, and one opaque blob defeats MSIX differential
+         updates. -->
+    <PublishSingleFile>false</PublishSingleFile>
+
+    <!-- Trim the runtime, not our code. TrimMode=partial trims only
+         assemblies marked IsTrimmable — the .NET framework ones, which are
+         the actual size problem — and leaves NetPulseApp.dll and
+         System.Management with every member intact. That's what keeps
+         Activator.CreateInstance over the page UserControls in
+         NavigationManager, and the WMI queries in SystemInfoService, safe.
+         Do NOT switch this to full without re-testing both. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+
+    <!-- PublishTrimmed silently flips runtime feature switches off (in
+         NetPulseApp.runtimeconfig.json, on build, not just publish).
+         Three of them would break this app:
+         JsonSerializerIsReflectionEnabledByDefault=false makes every
+         JsonSerializer.Serialize/Deserialize call throw "Reflection-based
+         serialization has been disabled" — that's DeviceData/SettingsService
+         (dark mode, sidebar state, tray preference never load or save) and
+         DeviceData/ApplicationDataManager's metrics logging. No
+         JsonSerializerContext is registered for AppSettingsVm etc., so this
+         has to stay on rather than switching to source-generated
+         serialization.
+         BuiltInComInteropSupport=false takes out WMI (COM underneath) —
+         SystemInfoService's Win32_OperatingSystem/Win32_Processor/
+         Win32_ComputerSystem queries would silently return null.
+         CustomResourceTypesSupport=false breaks ResourceManager.GetObject for
+         anything that isn't a primitive or string — Properties/Resources.resx
+         has one such entry (a typed Bitmap). Turn all three back on. -->
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <CustomResourceTypesSupport>true</CustomResourceTypesSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="9.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WMI binds property values reflectively at runtime, so the trimmer
+         cannot see what SystemInfoService's queries touch. System.Management
+         is marked trimmable, so root the whole assembly rather than ship a
+         build where those silently return null. Costs a few hundred KB. -->
+    <TrimmerRootAssembly Include="System.Management" />
+
+    <!-- Properties/Resources.resx names its reader as a STRING inside the
+         compiled .resources blob (it has a typed Bitmap entry), invisible to
+         the trimmer, which then drops the assembly — the app would die on
+         the first resx image read with "Could not load file or assembly
+         'System.Resources.Extensions'". Same root cause as
+         CustomResourceTypesSupport above. -->
+    <TrimmerRootAssembly Include="System.Resources.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\180x180.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Font Awesome 6 Free Solid, drawn by Service\Icons\IconGlyphRenderer.
+         A plain embedded resource, NOT the WPF-only pack-URI resource
+         FontAwesome.Sharp used — that's what let this template drop the
+         package (and the PresentationFramework/PresentationCore/WindowsBase/
+         System.Xaml it dragged into an otherwise pure WinForms app). Licensed
+         SIL OFL 1.1, which permits embedding; see
+         Resources\Fonts\ATTRIBUTION.txt. -->
+    <EmbeddedResource Include="Resources\Fonts\fa-solid-900.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

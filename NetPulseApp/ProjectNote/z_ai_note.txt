@@ -1,0 +1,130 @@
+
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.
+********************************************************************************************************
+First review updated Project source code. I have made some changes.
+If any addition or change needed, please suggest accordingly. 
+
+
+And write a solid md file doc with folder structure, how we can utilize NetPulseApp project with following ready items.
+
+-Complete Dashboard: Sidebar, Title bar, Header: /UserControls/Layout
+-Side menu
+-Dynamic tab config, about UI, setitng UI
+
+-Set App data location: /DeviceData/ApplicationDataManager.cs
+-App Data management with json: /DeviceData/SettingsService.cs
+-Dynamic app config: logp, data: /Helper/AppConfig.cs
+-Centare App Name: /Helper/AppConfig.cs
+-Centar app logo management: /Helper/AppConfig.cs
+-System Tray: /Service/SystemTrayService.cs
+-Custom alert and toast: /Managers/AlertNotificationService.cs, ToastsNotificationManager.cs
+
+-Logger: /Helper/Logger.cs
+-Theme: Dark mode and ligth mode: /Managers/ThemeManager.cs
+-Telemetry: collect user device basic data: /DeviceData/StartupService.cs
+-Dpi awareness
+
+-.NET 10.0
+-Cutome Icons management for less size MS Store package release
+-WinAppPakaging project: for creat MS Store package release
+-Quick package gen by: /NetPulseApp/build-store-package.cmd
+
+
+
+write precise and effective doc.
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\Doc
+
+
+
+
+
+
+
+
+
+Fix build error:
+Windows Forms is not supported or recommended with trimming enabled. Please go to https://aka.ms/dotnet-illink/windows-forms for more details.
+
+Follow pattern:
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\NetSpeedMeterPlus.csproj
+G:\src\MS_Store_App\NetSpeedMeterPlus\PackagingLIB\PackagingLIB.wapproj
+
+
+
+
+
+
+
+Task 01: 
+Update NetPulseApp.csproj to .NET 10.0
+G:\src\MS_Store_App\NetPulseApp\NetPulseApp\NetPulseApp.csproj
+
+Task 02:
+Update build-store-package.cmd for this project:
+G:\src\MS_Store_App\NetPulseApp\build-store-package.cmd
+Make sure package file size near: 24 MB
+
+
+Task 03:
+Add gradient color title bar feature from:
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro\UserControls\Layout\TitleBarControl.cs, TitleBarControl.Theme.cs
+gradient based on: /Helper/AppConfig.cs
+public static Color PrimaryColor = Color.FromArgb(59, 68, 246); // #3B44F6
+
+
+
+
+
+
+
+
+
+/Layout/TitleBarControl.cs: titlebar icon missing (Left side)
+
+Add helpul UI library from:
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus
+G:\src\MS_Store_App\CpuZxPro
+Ex: 
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro\Managers\AlertMessageService.cs, NotificationManager.cs
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro\UiService
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro\UserControls\Layout
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\UserControls\Lib
+
+I mean, import common reusable code. 
+
+
+
+
+
+Now improve: /Helper/AppConfig.cs
+Add improvement from my recent updated Project: 
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\Helper\AppConfig.cs
+- Add:
+public static Color PrimaryColor = Color.FromArgb(59, 68, 246); // #3B44F6
+
+        // ── Layout dimensions (base values at 96 DPI) ───────────────────────────
+        public static int TitleBarHeight = 35;
+        public static int HeaderHeight = 60;
+        public static int SidebarWidth = 200;  //250
+        public static int SidebarCollapsedWidth = 60;
+
+
+-Add: Custome /Resources/Fonts and Icons to remove: 
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+
+And also, review updated project, if something is missing, please add it into template project.
+
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.

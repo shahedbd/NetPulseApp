@@ -1,0 +1,33 @@
+Font Awesome 6 Free — Solid (fa-solid-900.ttf)
+================================================
+
+Font:      Font Awesome 6 Free (Solid face only)
+Source:    https://fontawesome.com
+Licence:   SIL Open Font License 1.1 (OFL-1.1)
+Licence text: https://scripts.sil.org/OFL
+
+The OFL expressly permits embedding this font in an application, including a
+commercial one, provided the font itself is not sold on its own.
+
+Provenance
+----------
+This file was extracted from the FontAwesome.Sharp 6.6.0 NuGet package, which
+bundles the same official Font Awesome 6 Free faces under the same licence. It
+is byte-identical to the font that package shipped, so every glyph renders
+exactly as it did before Services\Icons replaced the library.
+
+Why it is here
+--------------
+FontAwesome.Sharp ships a single assembly serving both WinForms and WPF, and
+stores its fonts as a WPF resource container reachable only through a pack URI.
+Referencing it therefore pulled PresentationFramework, PresentationCore,
+WindowsBase and System.Xaml — 17.6 MB compressed — into a WinForms-only MSIX.
+The font is now a plain embedded resource rendered with GDI+.
+
+ACTION REQUIRED
+---------------
+Place the full, verbatim OFL-1.1 licence text next to this file as OFL.txt.
+Ship it from the official Font Awesome download (its otfs/ and webfonts/ folders
+are accompanied by LICENSE.txt) or from https://scripts.sil.org/OFL. The OFL
+requires the licence to be distributed with the font; this attribution note is
+not a substitute for it.
