@@ -29,5 +29,9 @@
         /// the Traceroute page's target dropdown. Capped by the page on save.</summary>
         public List<string> TraceTargets { get; set; } = new();
 
+        /// <summary>Recent DNS lookup domains (most recent first), shown in
+        /// the DNS Lookup page's domain dropdown. Capped by the page on save.</summary>
+        public List<string> DnsTargets { get; set; } = new();
+
     }
 }

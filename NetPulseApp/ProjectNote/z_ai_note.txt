@@ -7,8 +7,14 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
-Now implement tab: 03_Traceroute.png
-G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\03_Traceroute.png
+
+
+
+
+
+Now implement tab: 04_DNS_Lookup.png
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\04_DNS_Lookup.png
+
 
 - Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
 - Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.

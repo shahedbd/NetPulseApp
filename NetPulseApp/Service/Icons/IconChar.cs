@@ -26,6 +26,7 @@ public enum IconChar
     Globe = 0xF0AC,
     HardDrive = 0xF0A0,
     InfoCircle = 0xF05A,
+    MagnifyingGlass = 0xF002,
     Moon = 0xF186,
     Play = 0xF04B,
     PowerOff = 0xF011,
