@@ -7,6 +7,21 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now implement tab: 03_Traceroute.png
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\03_Traceroute.png
+
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.
+
+
+
+
+
 Fix the ping tab major bug:
 -clik on start button-->after few second app closed
 

@@ -33,6 +33,7 @@ public enum IconChar
     Server = 0xF233,
     Star = 0xF005,
     Stop = 0xF04D,
+    Trash = 0xF1F8,
     Sun = 0xF185,
     Times = 0xF00D,
     TimesCircle = 0xF057,
