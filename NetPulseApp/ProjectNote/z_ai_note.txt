@@ -7,3 +7,34 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+I have created project: NetPulseApp, using my desktop common template app:
+G:\src\MS_Store_App\DesktopAppTemplate
+How to use DesktopAppTemplate doc:
+G:\src\MS_Store_App\DesktopAppTemplate\Doc\Ready Features & Usage Guide.md
+
+
+NetPulseApp Project Updated Source code:
+G:\src\MS_Store_App\NetPulseApp
+Doc:
+G:\src\MS_Store_App\NetPulseApp
+
+
+Now your tasks are:
+-Understand NetPulseApp project first
+-Implement UI one by one:
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images
+Start from: 02_Ping.png and last one will be: 01_Dashboard_Running.png
+One UI done, then approval to start next one.
+
+Always write doc here, if needed:
+G:\src\MS_Store_App\NetPulseApp\doc
+
+
+rules to follow strickly:
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.
