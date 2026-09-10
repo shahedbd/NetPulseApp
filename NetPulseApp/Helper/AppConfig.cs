@@ -87,12 +87,12 @@ namespace NetPulseApp.Helper
         // or manager code — NavigationManager renders and wires these up.
         public static List<NavItem> NavItems = new()
         {
-            new NavItem { Label = "Dashboard", Icon = IconChar.Gauge,      IconColor = Color.FromArgb(59, 130, 246),  ControlType = typeof(DashboardControl) },
-            new NavItem { Label = "Tab One",   Icon = IconChar.HardDrive,  IconColor = Color.FromArgb(245, 158, 11),  ControlType = typeof(TabOneControl)    },
-            new NavItem { Label = "Tab Two",   Icon = IconChar.Server,     IconColor = Color.FromArgb(34, 197, 94),   ControlType = typeof(TabTwoControl)    },
+            new NavItem { Label = "Dashboard", Icon = IconChar.Gauge,        IconColor = Color.FromArgb(59, 130, 246),  ControlType = typeof(DashboardControl) },
+            new NavItem { Label = "Ping",      Icon = IconChar.SatelliteDish, IconColor = Color.FromArgb(34, 197, 94),   ControlType = typeof(PingControl)      },
+            new NavItem { Label = "Tab Two",   Icon = IconChar.Server,        IconColor = Color.FromArgb(245, 158, 11),  ControlType = typeof(TabTwoControl)    },
             // ShowModal instead of ControlType — About is a dialog, not a
             // content page, so there's nothing to dock into the content panel.
-            new NavItem { Label = "About",     Icon = IconChar.InfoCircle, IconColor = Color.FromArgb(148, 163, 184), ShowModal = () => new AboutForm().ShowDialog() },
+            new NavItem { Label = "About",     Icon = IconChar.InfoCircle,    IconColor = Color.FromArgb(148, 163, 184), ShowModal = () => new AboutForm().ShowDialog() },
         };
     }
 

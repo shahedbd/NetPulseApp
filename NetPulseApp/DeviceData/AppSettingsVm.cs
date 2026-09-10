@@ -19,5 +19,11 @@
         // minimize-to-tray behavior (AppConfig.EnableSystemTray), so
         // existing installs see no behavior change until they opt out.
         public bool MinimizeToTrayOnClose { get; set; } = true;
+
+        // ── Tool state ───────────────────────────────────────────────────
+        /// <summary>Recent ping targets (most recent first), shown in the
+        /// Ping page's target dropdown. Capped by the page on save.</summary>
+        public List<string> PingTargets { get; set; } = new();
+
     }
 }
