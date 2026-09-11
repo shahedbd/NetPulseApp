@@ -8,8 +8,8 @@
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
 
-Now implement tab: 07_Settings.png
-G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\07_Settings.png
+Now implement tab: 01_Dashboard_Running.png
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\01_Dashboard_Running.png
 
 
 - Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
