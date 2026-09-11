@@ -8,12 +8,10 @@
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
 
+Now implement tab: 05_Port_Checker.png
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\05_Port_Checker.png
 
 
-
-
-Now implement tab: 04_DNS_Lookup.png
-G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\04_DNS_Lookup.png
 
 
 - Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.

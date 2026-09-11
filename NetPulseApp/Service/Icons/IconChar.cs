@@ -29,6 +29,7 @@ public enum IconChar
     MagnifyingGlass = 0xF002,
     Moon = 0xF186,
     Play = 0xF04B,
+    Plug = 0xF1E6,
     PowerOff = 0xF011,
     SatelliteDish = 0xF7BF,
     Server = 0xF233,

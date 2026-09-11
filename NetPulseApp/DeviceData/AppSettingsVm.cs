@@ -33,5 +33,9 @@
         /// the DNS Lookup page's domain dropdown. Capped by the page on save.</summary>
         public List<string> DnsTargets { get; set; } = new();
 
+        /// <summary>Recent port-check hosts (most recent first), shown in
+        /// the Port Checker page's host dropdown. Capped by the page on save.</summary>
+        public List<string> PortCheckerHosts { get; set; } = new();
+
     }
 }
