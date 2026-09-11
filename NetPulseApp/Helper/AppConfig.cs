@@ -92,6 +92,7 @@ namespace NetPulseApp.Helper
             new NavItem { Label = "Traceroute", Icon = IconChar.Globe,       IconColor = Color.FromArgb(99, 102, 241),  ControlType = typeof(TracerouteControl) },
             new NavItem { Label = "DNS Lookup", Icon = IconChar.MagnifyingGlass, IconColor = Color.FromArgb(6, 182, 212), ControlType = typeof(DnsLookupControl) },
             new NavItem { Label = "Port Checker", Icon = IconChar.Plug,      IconColor = Color.FromArgb(20, 184, 166),  ControlType = typeof(PortCheckerControl) },
+            new NavItem { Label = "WHOIS IP",   Icon = IconChar.AddressCard,  IconColor = Color.FromArgb(244, 63, 94),   ControlType = typeof(WhoisControl)     },
             new NavItem { Label = "Tab Two",   Icon = IconChar.Server,        IconColor = Color.FromArgb(245, 158, 11),  ControlType = typeof(TabTwoControl)    },
             // ShowModal instead of ControlType — About is a dialog, not a
             // content page, so there's nothing to dock into the content panel.

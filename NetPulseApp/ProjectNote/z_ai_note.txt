@@ -8,9 +8,8 @@
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
 
-Now implement tab: 05_Port_Checker.png
-G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\05_Port_Checker.png
-
+Now implement tab: 06_WHOIS_IP.png
+G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\06_WHOIS_IP.png
 
 
 

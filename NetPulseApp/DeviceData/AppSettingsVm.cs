@@ -37,5 +37,9 @@
         /// the Port Checker page's host dropdown. Capped by the page on save.</summary>
         public List<string> PortCheckerHosts { get; set; } = new();
 
+        /// <summary>Recent WHOIS targets (most recent first), shown in the
+        /// WHOIS IP page's target dropdown. Capped by the page on save.</summary>
+        public List<string> WhoisTargets { get; set; } = new();
+
     }
 }

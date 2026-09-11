@@ -17,6 +17,7 @@ public enum IconChar
     /// <summary>No icon. Renders as a transparent square.</summary>
     None = 0,
 
+    AddressCard = 0xF2BB,
     Bars = 0xF0C9,
     CheckCircle = 0xF058,
     Copy = 0xF0C5,
