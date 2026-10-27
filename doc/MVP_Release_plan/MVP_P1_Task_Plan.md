@@ -15,8 +15,8 @@ Status key: ☐ Todo · ◐ In progress · ☑ Done · ⏸ Blocked / waiting on 
 | F5 Jitter + quality score | S1 | 0.5 d | NetPulse `PingService` | ◐ Built, awaiting build/QA |
 | F7 Subnet Calculator | S1 | 1 d | — (new, pure math) | ◐ Built, awaiting build/QA |
 | F1 Diagnose My Connection ⭐ | S2 | 2–3 d | NetPulse services + IpAddressApp | ◐ Built, awaiting build/QA |
-| F3 Internet Speed Test | S3 | 0.5–1 d | WiFiPasswordViewer | ☐ Todo |
-| F4 Wi-Fi Info / Signal panel | S3 | 1 d | WiFiPasswordViewer | ☐ Todo |
+| F3 Internet Speed Test | S3 | 0.5–1 d | WiFiPasswordViewer | ◐ Built, awaiting build/QA |
+| F4 Wi-Fi Info / Signal panel | S3 | 1 d | WiFiPasswordViewer | ◐ Built, awaiting build/QA |
 | F6 Background monitoring + alerts | S4 | 1.5 d | IpAddressApp + CpuZxPro | ☐ Todo |
 | QA pass | S4 | 0.5 d | — | ☐ Todo |
 
@@ -103,17 +103,17 @@ F6 Tray monitor (after F2 + F5: NetworkChangeMonitor + quality thresholds)
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 3.1 | Copy `SpeedTestService`, `SpeedTestResult` and `TestHistoryStore` from WiFiPasswordViewer | `Service/Network/`, `Model/`, `Helper/` | ☐ |
-| 3.2 | Copy the SpeedTest + TestHistory pages; switch the tiles to `DataCard` | `UserControls/Pages/SpeedTestControl*.cs` | ☐ |
-| 3.3 | Add the nav item | `AppConfig.NavItems` | ☐ |
+| 3.1 | Copy `SpeedTestService`, `SpeedTestResult` and `TestHistoryStore` from WiFiPasswordViewer | `Service/Network/`, `Model/`, `Helper/` | ☑ |
+| 3.2 | Copy the SpeedTest + TestHistory pages; switch the tiles to `DataCard` | `UserControls/Pages/SpeedTestControl*.cs` | ☑ |
+| 3.3 | Add the nav item | `AppConfig.NavItems` | ☑ |
 
 ### F4 — Wi-Fi Info / Signal panel · S3
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 4.1 | Copy `WlanNative`, `WifiAnalyzerService*`, `WifiIeParser`, `WifiSecurityMapper` and the models | `Native/`, `Service/Network/`, `Model/` | ☐ |
-| 4.2 | Page from `CurrentConnectionTab` + `SignalHistoryChart` + `WifiStatePanel` (handles Location denied / no adapter) | `UserControls/Pages/WifiControl*.cs` | ☐ |
-| 4.3 | Add the nav item; nearby networks/channels tabs stay in v1.1 | `AppConfig.NavItems` | ☐ |
+| 4.1 | Copy `WlanNative`, `WifiAnalyzerService*`, `WifiIeParser`, `WifiSecurityMapper` and the models | `Native/`, `Service/Network/`, `Model/` | ☑ |
+| 4.2 | Page from `CurrentConnectionTab` + `SignalHistoryChart` + `WifiStatePanel` (handles Location denied / no adapter) | `UserControls/Pages/WifiControl*.cs` | ☑ |
+| 4.3 | Add the nav item; nearby networks/channels tabs stay in v1.1 | `AppConfig.NavItems` | ☑ |
 
 ### F6 — Background monitoring + drop alerts · S4
 

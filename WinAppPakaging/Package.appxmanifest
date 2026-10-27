@@ -64,5 +64,8 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
+    <!-- Required for Wi-Fi connection details (SSID/BSSID) on Windows 11 24H2+;
+         requested through Geolocator in WifiControl. -->
+    <DeviceCapability Name="location" />
   </Capabilities>
 </Package>

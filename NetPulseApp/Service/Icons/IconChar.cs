@@ -31,6 +31,7 @@ public enum IconChar
     Globe = 0xF0AC,
     HardDrive = 0xF0A0,
     InfoCircle = 0xF05A,
+    LocationDot = 0xF3C5,
     MagnifyingGlass = 0xF002,
     Memory = 0xF538,
     Microchip = 0xF2DB,
@@ -50,5 +51,6 @@ public enum IconChar
     TriangleExclamation = 0xF071,
     Upload = 0xF093,
     WaveSquare = 0xF83E,
+    Wifi = 0xF1EB,
     WindowRestore = 0xF2D2,
 }

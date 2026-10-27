@@ -14,7 +14,7 @@ namespace NetPulseApp.Helper
     {
         // ── App identity ─────────────────────────────────────────────────────
         public static string AppName = "Net Pulse";
-        public static string AppSubtitle = "NetPulse — Network Diagnostic Toolkit";
+        public static string AppSubtitle = "Network Diagnostic Toolkit";
         public static string AppVersion = "v1.0.0.0";
 
         public static string AppIconPath => Path.Combine(Application.StartupPath, "Resources", "180x180.png");
@@ -119,6 +119,8 @@ namespace NetPulseApp.Helper
         {
             new NavItem { Label = "Dashboard", Icon = IconChar.Gauge,        IconColor = Color.FromArgb(59, 130, 246),  ControlType = typeof(DashboardControl) },
             new NavItem { Label = "Diagnose",  Icon = IconChar.CheckCircle,   IconColor = Color.FromArgb(16, 185, 129),  ControlType = typeof(DiagnoseControl)  },
+            new NavItem { Label = "Speed Test", Icon = IconChar.Download,    IconColor = Color.FromArgb(139, 92, 246),  ControlType = typeof(SpeedTestControl) },
+            new NavItem { Label = "Wi-Fi",     Icon = IconChar.Wifi,          IconColor = Color.FromArgb(236, 72, 153),  ControlType = typeof(WifiControl)      },
             new NavItem { Label = "Ping",      Icon = IconChar.SatelliteDish, IconColor = Color.FromArgb(34, 197, 94),   ControlType = typeof(PingControl)      },
             new NavItem { Label = "Traceroute", Icon = IconChar.Globe,       IconColor = Color.FromArgb(99, 102, 241),  ControlType = typeof(TracerouteControl) },
             new NavItem { Label = "DNS Lookup", Icon = IconChar.MagnifyingGlass, IconColor = Color.FromArgb(6, 182, 212), ControlType = typeof(DnsLookupControl) },

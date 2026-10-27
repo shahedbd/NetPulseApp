@@ -46,6 +46,10 @@
         public IpProvider PreferredProvider { get; set; } = IpProvider.IpWhoIs;
         public bool ApiAutoFallback { get; set; } = true;
 
+        // ── Speed test history (Helper/TestHistoryStore.cs) ──────────────
+        public bool SpeedTestKeepHistory { get; set; } = true;
+        public int SpeedTestHistoryLimit { get; set; } = 200;       // 50 / 100 / 200
+
     }
 
     /// <summary>
