@@ -8,7 +8,13 @@
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
 Now review:
-G:\src\MS_Store_App\NetPulseApp\doc\MVP_Feature_Recommendations.md
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan\MVP_Feature_Recommendations.md
+
+From: 3. Must-have features for MVP (P1)
+-how can we implement all, give me a short task management plan.
+
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan
 
 
 
