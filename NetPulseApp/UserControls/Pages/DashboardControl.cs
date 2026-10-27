@@ -66,7 +66,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Dashboard");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("Real-time network overview of your connection.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
 
             // Live badge, right-aligned — same "● Live" convention as the
             // Ping page's graph badge.

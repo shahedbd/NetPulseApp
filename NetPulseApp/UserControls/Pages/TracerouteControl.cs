@@ -59,6 +59,10 @@ namespace NetPulseApp.UserControls.Pages
             LoadHistory();
             ResetSummary();
 
+            // Theme once at startup too — otherwise controls keep their
+            // light defaults until the user next toggles the theme.
+            ApplyTheme();
+
             themeManager.ThemeChanged += OnThemeChanged;
         }
 
@@ -72,7 +76,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Traceroute");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("See the path your packets take to a destination.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
             panel.Controls.Add(_subtitle);
             panel.Controls.Add(_title);
             Controls.Add(panel);

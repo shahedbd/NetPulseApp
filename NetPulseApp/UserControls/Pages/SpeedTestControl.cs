@@ -66,7 +66,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Speed Test");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("Measure download, upload, ping and jitter against Cloudflare's speed servers.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
 
             _start = ToolUiFactory.AccentButton("Start Test", IconChar.Play, themeManager.CurrentTheme.SuccessColor);
             _start.Size = new Size(Scale(120), Scale(34));

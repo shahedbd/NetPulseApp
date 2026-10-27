@@ -68,7 +68,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Wi-Fi");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("Current Wi-Fi connection, signal strength and link details.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
             _copy = ToolUiFactory.GhostButton("Copy Details", IconChar.Copy);
             _copy.Width = Scale(130);
 

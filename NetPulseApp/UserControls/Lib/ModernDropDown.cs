@@ -142,6 +142,14 @@ namespace NetPulseApp.UserControls.Lib
             _inner.SetBounds(left, top,
                 Math.Max(S(24), Width - left + nativeArrow), innerHeight);
 
+            // FlatStyle.Flat paints a 2px border in SystemColors.Window —
+            // a white box inside our shell in dark mode. Clip it away.
+            const int flatBorder = 2;
+            var old = _inner.Region;
+            _inner.Region = new Region(new Rectangle(flatBorder, flatBorder,
+                Math.Max(1, _inner.Width - flatBorder * 2), Math.Max(1, innerHeight - flatBorder * 2)));
+            old?.Dispose();
+
             _caret.SetBounds(Width - gutter, S(1), gutter - S(3), Height - S(2));
         }
 

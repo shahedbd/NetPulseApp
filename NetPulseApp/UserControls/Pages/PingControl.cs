@@ -58,6 +58,10 @@ namespace NetPulseApp.UserControls.Pages
             LoadHistory();
             ResetStatsLabel();
 
+            // Theme once at startup too — otherwise controls keep their
+            // light defaults until the user next toggles the theme.
+            ApplyTheme();
+
             themeManager.ThemeChanged += OnThemeChanged;
         }
 
@@ -71,7 +75,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Ping");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("Round-trip latency test with a live response-time graph.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
             panel.Controls.Add(_subtitle);
             panel.Controls.Add(_title);
             Controls.Add(panel);

@@ -67,7 +67,7 @@ namespace NetPulseApp.UserControls.Pages
             _title = ToolUiFactory.PageTitle("Diagnose My Connection");
             _title.Location = new Point(0, Scale(2));
             _subtitle = ToolUiFactory.PageSubtitle("Finds where your connection breaks — adapter, router, DNS or internet — and how to fix it.");
-            _subtitle.Location = new Point(Scale(2), Scale(34));
+            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
 
             _diagnose = ToolUiFactory.AccentButton("Diagnose", IconChar.MagnifyingGlass,
                 themeManager.CurrentTheme.AccentColor);

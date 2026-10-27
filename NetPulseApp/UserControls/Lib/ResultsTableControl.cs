@@ -1,4 +1,5 @@
 using NetPulseApp.Managers;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NetPulseApp.UserControls.Lib
@@ -87,6 +88,7 @@ namespace NetPulseApp.UserControls.Lib
                     };
                 }
                 UpdateColumnWidths();
+                ApplyNativeTheme();
             };
 
             ApplyTheme();
@@ -140,7 +142,29 @@ namespace NetPulseApp.UserControls.Lib
             var theme = ThemeManager.Instance.CurrentTheme;
             BackColor = theme.CardBackground;
             ForeColor = theme.TextColor;
+            ApplyNativeTheme();
             Invalidate();
+        }
+
+        // The header's filler strip past the last column and the scrollbars
+        // are drawn by the OS, not by the owner-draw handlers — without a
+        // dark visual style they stay light-grey/white in dark mode.
+        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(IntPtr hWnd, string appName, string? idList);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        private const int LVM_GETHEADER = 0x101F;
+
+        private void ApplyNativeTheme()
+        {
+            if (!IsHandleCreated) return;
+            bool dark = ThemeManager.Instance.IsDarkTheme;
+            SetWindowTheme(Handle, dark ? "DarkMode_Explorer" : "Explorer", null);
+            IntPtr header = SendMessage(Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+            if (header != IntPtr.Zero)
+                SetWindowTheme(header, dark ? "DarkMode_ItemsView" : "ItemsView", null);
         }
 
         // ─────────────────────────────────────────────────────────────────────
