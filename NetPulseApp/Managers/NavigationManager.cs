@@ -10,6 +10,10 @@ namespace NetPulseApp.Managers
     public class NavigationManager
     {
         private UserControl _currentControl;
+        private readonly Dictionary<Type, Button> _pageButtons = new();
+
+        /// <summary>The shell's manager — lets a page link to another page (e.g. Dashboard → Diagnose).</summary>
+        public static NavigationManager Current { get; private set; }
 
         // ─────────────────────────────────────────────────────────────────────
         // SIDEBAR SETUP
@@ -23,6 +27,7 @@ namespace NetPulseApp.Managers
         /// </summary>
         public void BuildSidebar(SidebarControl sidebar, Panel contentPanel)
         {
+            Current = this;
             Button firstPageButton = null;
 
             foreach (var item in AppConfig.NavItems)
@@ -44,7 +49,10 @@ namespace NetPulseApp.Managers
                 };
 
                 if (item.ShowModal == null)
+                {
                     firstPageButton ??= button;
+                    _pageButtons[item.ControlType] = button;
+                }
             }
 
             sidebar.BtnToggle.Click += (s, e) => sidebar.ToggleCollapse();
@@ -52,6 +60,17 @@ namespace NetPulseApp.Managers
             // Land on the first actual page on startup — never auto-open a
             // modal item even if one happens to be first in the list.
             firstPageButton?.PerformClick();
+        }
+
+        /// <summary>
+        /// Opens the nav page of the given type, exactly as a sidebar click
+        /// would. Callers inside the outgoing page must defer this
+        /// (BeginInvoke) — the switch disposes that page.
+        /// </summary>
+        public void NavigateTo(Type controlType)
+        {
+            if (_pageButtons.TryGetValue(controlType, out var button))
+                button.PerformClick();
         }
 
         // ─────────────────────────────────────────────────────────────────────

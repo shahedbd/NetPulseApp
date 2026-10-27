@@ -14,7 +14,7 @@ Status key: ☐ Todo · ◐ In progress · ☑ Done · ⏸ Blocked / waiting on 
 | F2 Public IP card + status bar | S1 | 0.5 d | IpAddressApp | ◐ Built, awaiting build/QA |
 | F5 Jitter + quality score | S1 | 0.5 d | NetPulse `PingService` | ◐ Built, awaiting build/QA |
 | F7 Subnet Calculator | S1 | 1 d | — (new, pure math) | ◐ Built, awaiting build/QA |
-| F1 Diagnose My Connection ⭐ | S2 | 2–3 d | NetPulse services + IpAddressApp | ☐ Todo |
+| F1 Diagnose My Connection ⭐ | S2 | 2–3 d | NetPulse services + IpAddressApp | ◐ Built, awaiting build/QA |
 | F3 Internet Speed Test | S3 | 0.5–1 d | WiFiPasswordViewer | ☐ Todo |
 | F4 Wi-Fi Info / Signal panel | S3 | 1 d | WiFiPasswordViewer | ☐ Todo |
 | F6 Background monitoring + alerts | S4 | 1.5 d | IpAddressApp + CpuZxPro | ☐ Todo |
@@ -93,11 +93,11 @@ F6 Tray monitor (after F2 + F5: NetworkChangeMonitor + quality thresholds)
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 1.1 | `DiagnoseService`: adapter → valid IP → gateway ping → DNS (system vs 1.1.1.1) → internet ping → HTTPS → captive portal; one `CheckResult` event per step | `Service/Network/DiagnoseService.cs` (new) | ☐ |
-| 1.2 | ICMP-blocked fallback: TCP 443 connect latency | same | ☐ |
-| 1.3 | `DiagnoseVerdicts`: about 10 rules → plain-English verdict + fix steps | `Service/Network/DiagnoseVerdicts.cs` (new) | ☐ |
-| 1.4 | Page: Diagnose button, verdict card, check table (✓/⚠/✗), "Open network settings" link | `UserControls/Pages/DiagnoseControl.cs` / `.Run.cs` (new) | ☐ |
-| 1.5 | Nav item #2 + Diagnose button on the Dashboard | `AppConfig.NavItems`, `DashboardControl.cs` | ☐ |
+| 1.1 | `DiagnoseService`: adapter → valid IP → gateway ping → DNS (system vs 1.1.1.1) → internet ping → HTTPS → captive portal; one `CheckResult` event per step | `Service/Network/DiagnoseService.cs` (new) | ☑ |
+| 1.2 | ICMP-blocked fallback: TCP 443 connect latency | same | ☑ |
+| 1.3 | `DiagnoseVerdicts`: about 10 rules → plain-English verdict + fix steps | `Service/Network/DiagnoseVerdicts.cs` (new) | ☑ |
+| 1.4 | Page: Diagnose button, verdict card, check table (✓/⚠/✗), "Open network settings" link | `UserControls/Pages/DiagnoseControl.cs` / `.Run.cs` (new) | ☑ |
+| 1.5 | Nav item #2 + Diagnose button on the Dashboard | `AppConfig.NavItems`, `DashboardControl.cs` | ☑ |
 
 ### F3 — Internet Speed Test · S3
 

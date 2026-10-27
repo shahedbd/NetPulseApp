@@ -10,7 +10,7 @@
 By following:
 G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan\MVP_P1_Task_Plan.md
 
-Start implementing Sprint 1
+Start implementing Sprint 2
 
 - Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
 - Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.

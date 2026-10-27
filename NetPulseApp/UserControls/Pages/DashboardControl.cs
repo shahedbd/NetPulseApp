@@ -23,6 +23,7 @@ namespace NetPulseApp.UserControls.Pages
         private Label _subtitle;
         private Label _badge;
         private IconButton _btnToggle;
+        private IconButton _btnDiagnose;
         private DataCardGrid _statRow;
         private DataCardControl _tileLatency;
         private DataCardControl _tileJitter;
@@ -78,15 +79,23 @@ namespace NetPulseApp.UserControls.Pages
                 AutoSize = true
             };
             _btnToggle = ToolUiFactory.GhostButton("Pause", IconChar.Stop);
+            _btnDiagnose = ToolUiFactory.AccentButton("Diagnose", IconChar.MagnifyingGlass,
+                themeManager.CurrentTheme.AccentColor);
+            _btnDiagnose.Size = new Size(Scale(120), Scale(34));
+            // Deferred: the switch disposes this page mid-click otherwise.
+            _btnDiagnose.Click += (s, e) => BeginInvoke(new Action(() =>
+                NavigationManager.Current?.NavigateTo(typeof(DiagnoseControl))));
 
             panel.Controls.Add(_subtitle);
             panel.Controls.Add(_title);
             panel.Controls.Add(_badge);
             panel.Controls.Add(_btnToggle);
+            panel.Controls.Add(_btnDiagnose);
             panel.Resize += (s, e) =>
             {
                 _btnToggle.Location = new Point(panel.Width - _btnToggle.Width - Scale(2), Scale(13));
-                _badge.Location = new Point(_btnToggle.Left - _badge.Width - Scale(12), Scale(18));
+                _btnDiagnose.Location = new Point(_btnToggle.Left - _btnDiagnose.Width - Scale(8), Scale(13));
+                _badge.Location = new Point(_btnDiagnose.Left - _badge.Width - Scale(12), Scale(18));
             };
             Controls.Add(panel);
         }
@@ -195,6 +204,7 @@ namespace NetPulseApp.UserControls.Pages
             _title.ForeColor = theme.HeadingColor;
             _subtitle.ForeColor = theme.SecondaryTextColor;
             ToolUiFactory.ApplyGhostTheme(_btnToggle);
+            ToolUiFactory.ApplyAccentTheme(_btnDiagnose, theme.AccentColor);
             ToolUiFactory.ApplyCardTheme(_connectionCard);
             ApplyPublicIpTheme();
             foreach (var cap in _connectionCaptions)
