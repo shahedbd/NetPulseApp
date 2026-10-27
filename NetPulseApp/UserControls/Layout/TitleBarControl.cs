@@ -58,6 +58,16 @@ namespace NetPulseApp.UserControls.Layout
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            // A minimized window lays its children out at zero width, and a
+            // restore from the taskbar paints once before the real size comes
+            // back. LinearGradientBrush throws on an empty rectangle, so skip
+            // that frame — the resize that follows invalidates and repaints.
+            if (ClientRectangle.Width <= 0 || ClientRectangle.Height <= 0)
+            {
+                base.OnPaint(e);
+                return;
+            }
+
             using var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
                 ClientRectangle, _gradientStart, _gradientEnd,
                 System.Drawing.Drawing2D.LinearGradientMode.Horizontal);

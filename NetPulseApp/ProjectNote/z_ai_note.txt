@@ -7,6 +7,27 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now fix know bug: 
+-app minimize into taskbar and mosue click thren app got hang.
+
+Already fixed in project: 
+G:\src\MS_Store_App\DuplicateFinderZx\DuplicateFinderZx
+
+
+Now fix in the project and template re use project too:
+G:\src\MS_Store_App\DesktopAppTemplate
+
+
+
+
+
+Now review:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Feature_Recommendations.md
+
+
+
+
+
 Now add about action icon.
 
 
