@@ -73,23 +73,14 @@ namespace NetPulseApp.Helper
 
         // ── About dialog content ────────────────────────────────────────────
         // Everything Forms/AboutForm.cs shows — edit these, not AboutForm.cs.
-        public static string AppDescription = "A reusable Windows Desktop application template.";
-        public static string DeveloperName = "Your Company Name";
-        public static string WebsiteUrl = "https://example.com";
-        public static string SupportEmail = "support@example.com";
-
-        public static List<string> AboutFeatures = new()
-        {
-            "Built on WinForms + .NET 10",
-            "Single-file central configuration (AppConfig.cs)",
-            "Dark / Light theme support",
-            "DPI-aware — scales cleanly from 100% to 200%",
-            "Collapsible sidebar navigation",
-            "Test data 01",
-            "Test data 02",
-            "Test data 03",
-            "Test data 04",
-        };
+        // Card rows live in UserControls/About/AboutContent.cs.
+        public static string AppDescription = "Network diagnostics, speed and Wi-Fi tools in one place";
+        public static string AppSubDescription = "Built with C#, WinForms and .NET 10.";
+        public static string DeveloperName = "Zero Byte Software Solutions";
+        public static string WebsiteUrl = "https://zerobytebd.com/";
+        public static string WebsiteLabel = "zerobytebd.com";
+        public static string SupportEmail = "shahedbddev@gmail.com";
+        public static string Copyright => $"© {DateTime.Now.Year} {DeveloperName}. All rights reserved.";
 
         // ── Layout dimensions (base values at 96 DPI) ───────────────────────────
         public static int TitleBarHeight = 35;

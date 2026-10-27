@@ -7,6 +7,14 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now fix dark mode issues in tabs:
+-Ping
+-Traceoute
+-DNS Lookup
+-Port Checker
+-WHOIS IP
+
+
 Now update about UI by following this project: 
 G:\src\MS_Store_App\CpuZxPro\CpuZXPro\Forms
 
