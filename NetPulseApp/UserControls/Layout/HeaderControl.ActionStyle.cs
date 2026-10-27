@@ -18,6 +18,13 @@ namespace NetPulseApp.UserControls.Layout
         private static readonly Color SunColor = Color.FromArgb(251, 191, 36);          // amber
         private static readonly Color MoonColor = Color.FromArgb(99, 102, 241);         // indigo
 
+        // Theme toggle glyphs — Segoe MDL2 Assets (Brightness / QuietHours),
+        // drawn as button text rather than a Font Awesome image, matching
+        // CpuZxPro.
+        private const string SunGlyph = "";
+        private const string MoonGlyph = "";
+        private static readonly Font ThemeGlyphFont = new("Segoe MDL2 Assets", 12f, FontStyle.Regular);
+
         /// <summary>Icon-only buttons carry no label, so the glyph runs a touch larger.</summary>
         private static int ActionIconSize => HeaderButtonService.IconSize + DpiAwareService.Scale(2);
 
@@ -88,12 +95,18 @@ namespace NetPulseApp.UserControls.Layout
         /// </summary>
         public void UpdateThemeButtonIcon()
         {
-            if (_btnTheme is not IconButton iconBtn || iconBtn.IsDisposed) return;
+            if (_btnTheme == null || _btnTheme.IsDisposed) return;
 
             bool isDark = _themeManager.IsDarkTheme;
 
-            iconBtn.IconChar = isDark ? IconChar.Sun : IconChar.Moon;
-            iconBtn.IconColor = isDark ? SunColor : MoonColor;
+            if (_btnTheme is IconButton iconBtn)
+                iconBtn.IconChar = IconChar.None;
+
+            _btnTheme.Font = ThemeGlyphFont;
+            _btnTheme.Text = isDark ? SunGlyph : MoonGlyph;
+            _btnTheme.ForeColor = isDark ? SunColor : MoonColor;
+            _btnTheme.TextAlign = ContentAlignment.MiddleCenter;
+            _btnTheme.Padding = Padding.Empty;
 
             _toolTip.SetToolTip(_btnTheme, isDark ? "Switch to Light Mode" : "Switch to Dark Mode");
         }

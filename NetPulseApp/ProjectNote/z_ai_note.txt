@@ -7,6 +7,9 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Update iocn: Switch to Light mode with right one. Same CpuZXPro project.
+
+
 Update Header control by following my latest project pattern: (/UserControls/Layout/HeaderControl)
 G:\src\MS_Store_App\CpuZxPro\CpuZXPro
 
