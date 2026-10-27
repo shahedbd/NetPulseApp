@@ -7,6 +7,19 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Understand project doc:
+G:\src\MS_Store_App\NetPulseApp\doc
+
+And review app main UI sceenshort.
+
+Now suggest me what must and lucrative features we can add before MVP release.
+
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\doc
+
+
+
+
 
 Now implement tab: 01_Dashboard_Running.png
 G:\src\MS_Store_App\NetPulseApp\doc\NetPulse_Toolkit_UI_Images\01_Dashboard_Running.png

@@ -13,8 +13,8 @@ namespace NetPulseApp.Helper
     public static class AppConfig
     {
         // ── App identity ─────────────────────────────────────────────────────
-        public static string AppName = "Desktop App Template";
-        public static string AppSubtitle = "System Information";
+        public static string AppName = "Net Pulse";
+        public static string AppSubtitle = "NetPulse — Network Diagnostic Toolkit";
         public static string AppVersion = "v1.0.0.0";
 
         public static string AppIconPath => Path.Combine(Application.StartupPath, "Resources", "180x180.png");
@@ -68,11 +68,11 @@ namespace NetPulseApp.Helper
         public static int SidebarCollapsedWidth = 60;
 
         // ── Theme & colors ───────────────────────────────────────────────────
-        public static Color PrimaryColor = Color.FromArgb(59, 68, 246); // #3B44F6
-        public static Color BackgroundColor = Color.FromArgb(18, 18, 18);
-        public static Color SurfaceColor = Color.FromArgb(35, 35, 35);
-        public static Color TextPrimaryColor = Color.FromArgb(230, 230, 230);
-        public static Color TextSecondaryColor = Color.FromArgb(180, 180, 180);
+        public static Color PrimaryColor = Color.FromArgb(0, 191, 166); // #00BFA6
+        public static Color BackgroundColor = Color.FromArgb(18, 18, 18); // #121212
+        public static Color SurfaceColor = Color.FromArgb(35, 35, 35); // #232323
+        public static Color TextPrimaryColor = Color.FromArgb(230, 230, 230); // #E6E6E6
+        public static Color TextSecondaryColor = Color.FromArgb(180, 180, 180); // #B4B4B4
 
         // Title bar's own "chrome" color — fixed across both dark and light
         // theme (like PrimaryColor) so the title bar always reads as its own
