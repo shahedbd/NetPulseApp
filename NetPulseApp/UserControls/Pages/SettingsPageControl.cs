@@ -32,7 +32,7 @@ namespace NetPulseApp.UserControls.Pages
         public SettingsPageControl()
         {
             BackColor = _theme.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16);
+            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
 
             // Top-docked cards are claimed last-added-first, so add them
             // bottom-up (see PingControl's docking notes) — display order

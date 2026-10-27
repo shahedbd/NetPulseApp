@@ -38,7 +38,7 @@ namespace NetPulseApp.UserControls.Pages
         public DashboardControl()
         {
             BackColor = themeManager.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16);
+            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
 
             // Docking order per the sibling tool pages: Top panels added
             // bottom-up — display order ends up header, tiles, graph,

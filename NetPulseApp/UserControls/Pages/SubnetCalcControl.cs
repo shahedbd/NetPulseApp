@@ -28,7 +28,7 @@ namespace NetPulseApp.UserControls.Pages
         public SubnetCalcControl()
         {
             BackColor = themeManager.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16);
+            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
 
             // Docking order per the sibling tool pages: Fill first, Bottom
             // footer next, then Top panels bottom-up.

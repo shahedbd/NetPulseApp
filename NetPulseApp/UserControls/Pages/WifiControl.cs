@@ -38,7 +38,7 @@ namespace NetPulseApp.UserControls.Pages
         public WifiControl()
         {
             BackColor = themeManager.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16);
+            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
 
             // _body holds the live content; the state panel overlays it
             // (same Fill slot) whenever there is nothing to show.

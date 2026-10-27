@@ -40,7 +40,7 @@ namespace NetPulseApp.UserControls.Pages
         public DnsLookupControl()
         {
             BackColor = themeManager.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16);
+            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
 
             // Docking order per PingControl/TracerouteControl: the Fill
             // panel goes in first, Bottom footer next, then Top panels

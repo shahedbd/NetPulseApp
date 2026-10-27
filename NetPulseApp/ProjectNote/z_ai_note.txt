@@ -7,6 +7,12 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now update about UI by following this project: 
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro\Forms
+
+
+Now fix: all tabs header extra free space. Remove top margin from header.
+
 By following:
 G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan\MVP_P1_Task_Plan.md
 
