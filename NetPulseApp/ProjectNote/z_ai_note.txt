@@ -7,6 +7,25 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+By following:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan\MVP_P1_Task_Plan.md
+
+Start implementing Sprint 1
+
+
+
+
+
+-add task status
+-consider reuse already implemented stable feature from my app list:
+G:\src\MS_Store_App
+
+Give me short and precise decesison list. yes/no might be good
+
+
+
+
+
 Now review:
 G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan\MVP_Feature_Recommendations.md
 
