@@ -10,7 +10,7 @@ namespace NetPulseApp.UserControls.Layout
 {
     /// <summary>
     /// Part 02 — header bar: system summary on the left, action buttons on
-    /// the right (Settings · Theme). Only spans the region to the right of the
+    /// the right (About · Settings · Theme). Only spans the region to the right of the
     /// sidebar (see Doc/UI layout.md) — MainForm nests this inside the
     /// content-side panel, not directly under the title bar.
     ///
@@ -30,6 +30,7 @@ namespace NetPulseApp.UserControls.Layout
         private Panel _bottomBorder;
         private Button _btnSettings;
         private Button _btnTheme;
+        private Button _btnAbout;
 
         // ── State ─────────────────────────────────────────────────────────────
         private readonly ThemeManager _themeManager;
@@ -89,6 +90,8 @@ namespace NetPulseApp.UserControls.Layout
 
         private void BuildActionButtons()
         {
+            _btnAbout = CreateActionButton(IconChar.InfoCircle, $"About {AppConfig.AppName}", BtnAbout_Click);
+
             _btnSettings = CreateActionButton(IconChar.Gear, "Settings", BtnSettings_Click);
 
             // Icon, colour and tooltip set by UpdateThemeButtonIcon.
@@ -101,7 +104,7 @@ namespace NetPulseApp.UserControls.Layout
 
         /// <summary>
         /// Sizes the button bar to the button group and positions the buttons
-        /// right-to-left (Theme → Settings), vertically centred.
+        /// right-to-left (Theme → Settings → About), vertically centred.
         /// </summary>
         private void PositionButtons()
         {
@@ -119,7 +122,7 @@ namespace NetPulseApp.UserControls.Layout
                 buttons: buttons);
         }
 
-        private Button[] ActionButtons => new[] { _btnTheme, _btnSettings };
+        private Button[] ActionButtons => new[] { _btnTheme, _btnSettings, _btnAbout };
 
         // ─────────────────────────────────────────────────────────────────────
         // ACTIONS
@@ -133,6 +136,12 @@ namespace NetPulseApp.UserControls.Layout
         private void BtnSettings_Click(object sender, EventArgs e)
         {
             using var dlg = new SettingsDialog();
+            dlg.ShowDialog(this.FindForm());
+        }
+
+        private void BtnAbout_Click(object sender, EventArgs e)
+        {
+            using var dlg = new AboutForm();
             dlg.ShowDialog(this.FindForm());
         }
 

@@ -7,6 +7,10 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now add about action icon.
+
+
+
 Update iocn: Switch to Light mode with right one. Same CpuZXPro project.
 
 

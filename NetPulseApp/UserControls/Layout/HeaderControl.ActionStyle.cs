@@ -8,13 +8,14 @@ namespace NetPulseApp.UserControls.Layout
     /// <summary>
     /// HeaderControl — the action buttons on the right and their colours.
     ///
-    /// Settings and Theme are icon-only buttons on a neutral surface
+    /// About, Settings and Theme are icon-only buttons on a neutral surface
     /// (header-toned fill, thin border) so each icon can carry its own fixed
     /// colour. The colours are mid-saturation so they read on both themes.
     /// </summary>
     public partial class HeaderControl
     {
         private static readonly Color SettingsIconColor = Color.FromArgb(139, 92, 246); // purple
+        private static readonly Color AboutIconColor = Color.FromArgb(33, 150, 243);    // blue
         private static readonly Color SunColor = Color.FromArgb(251, 191, 36);          // amber
         private static readonly Color MoonColor = Color.FromArgb(99, 102, 241);         // indigo
 
@@ -85,6 +86,7 @@ namespace NetPulseApp.UserControls.Layout
         private void StyleActionButtons()
         {
             StyleActionButton(_btnSettings, SettingsIconColor);
+            StyleActionButton(_btnAbout, AboutIconColor);
             StyleActionButton(_btnTheme, _themeManager.IsDarkTheme ? SunColor : MoonColor);
             UpdateThemeButtonIcon();
         }
