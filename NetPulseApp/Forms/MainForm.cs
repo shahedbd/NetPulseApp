@@ -101,9 +101,10 @@ namespace NetPulseApp.Forms
             }
         }
 
-        private async void MainForm_Shown(object sender, EventArgs e)
+        private void MainForm_Shown(object sender, EventArgs e)
         {
-            await LoadSystemSummaryAsync();
+            // Header owns its summary load — HeaderControl.SystemSummary.cs.
+            _header?.LoadSystemSummary();
         }
 
         private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
@@ -154,48 +155,6 @@ namespace NetPulseApp.Forms
         {
             _titleBar = new TitleBarControl();
             Controls.Add(_titleBar);
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // SYSTEM SUMMARY (header left side)
-        // ─────────────────────────────────────────────────────────────────────
-
-        private async Task LoadSystemSummaryAsync()
-        {
-            string summary;
-            try
-            {
-                summary = await Task.Run(() =>
-                {
-                    try
-                    {
-                        var service = new SystemInfoService();
-                        string computerName = service.GetOperatingSystemInfo()?.CSName ?? "Unknown PC";
-                        string cpuName = service.GetProcessorName();
-                        string ram = FormatGigabytes(service.GetTotalPhysicalMemory());
-
-                        return $"{computerName}  |  {cpuName}  |  {ram} GB RAM";
-                    }
-                    catch
-                    {
-                        return "System information unavailable";
-                    }
-                });
-            }
-            catch
-            {
-                summary = "Error loading system info";
-            }
-
-            var lbl = _header?.LblSystemSummary;
-            if (lbl != null && !lbl.IsDisposed)
-                lbl.Text = summary;
-        }
-
-        private static string FormatGigabytes(ulong bytes)
-        {
-            const double GB = 1024d * 1024 * 1024;
-            return (bytes / GB).ToString("F1");
         }
 
         // ─────────────────────────────────────────────────────────────────────

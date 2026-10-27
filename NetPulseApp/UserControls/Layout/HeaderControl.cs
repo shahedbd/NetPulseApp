@@ -9,24 +9,37 @@ using NetPulseApp.UiComponent;
 namespace NetPulseApp.UserControls.Layout
 {
     /// <summary>
-    /// Part 02 — header bar. Left: PC name | Processor | RAM (via
-    /// SystemInfoService). Right: Theme + Settings action buttons.
-    /// Only spans the region to the right of the sidebar (see
-    /// Doc/UI layout.md) — MainForm nests this inside the content-side panel,
-    /// not directly under the title bar.
+    /// Part 02 — header bar: system summary on the left, action buttons on
+    /// the right (Settings · Theme). Only spans the region to the right of the
+    /// sidebar (see Doc/UI layout.md) — MainForm nests this inside the
+    /// content-side panel, not directly under the title bar.
+    ///
+    /// Layout: a docked, self-sizing button bar on the right and the summary
+    /// strip docked to fill the rest, so a long CPU name is clipped by the
+    /// strip instead of running under the buttons — no resize-time width math.
+    ///
+    /// Button styling lives in HeaderControl.ActionStyle.cs, the summary strip
+    /// in HeaderControl.Summary.cs / .SystemSummary.cs, theme and DPI code in
+    /// HeaderControl.Theme.cs.
     /// </summary>
-    public class HeaderControl : UserControl
+    public partial class HeaderControl : UserControl
     {
-        // ── Public controls (MainForm reads/wires these) ───────────────────────
-        public Label LblSystemSummary { get; private set; }
-        public Button BtnSettings { get; private set; }
-        public Button BtnTheme { get; private set; }
+        // ── Child controls ────────────────────────────────────────────────────
+        private Panel _buttonBar;
+        private Panel _leftAccent;
+        private Panel _bottomBorder;
+        private Button _btnSettings;
+        private Button _btnTheme;
 
+        // ── State ─────────────────────────────────────────────────────────────
         private readonly ThemeManager _themeManager;
         private readonly ToolTip _toolTip;
-        private Panel _bottomBorder;
-        private Panel _leftAccent;
-        private Panel _buttonBar;
+
+        private int HeaderHeight => DpiAwareService.Scale(AppConfig.HeaderHeight);
+
+        // ─────────────────────────────────────────────────────────────────────
+        // CONSTRUCTOR
+        // ─────────────────────────────────────────────────────────────────────
 
         public HeaderControl()
         {
@@ -34,127 +47,101 @@ namespace NetPulseApp.UserControls.Layout
             _toolTip = new ToolTip { AutoPopDelay = 3000, InitialDelay = 400, ReshowDelay = 200 };
 
             Dock = DockStyle.Top;
-            Height = DpiAwareService.Scale(AppConfig.HeaderHeight);
+            Height = HeaderHeight;
 
-            BuildLayout();
+            Build();
             ApplyTheme();
         }
 
-        private void BuildLayout()
+        // ─────────────────────────────────────────────────────────────────────
+        // BUILD
+        // ─────────────────────────────────────────────────────────────────────
+
+        private void Build()
         {
-            // Fixed-width right-side panel — its own Width/Height are known
-            // immediately (not inherited from the not-yet-laid-out parent),
-            // so button positioning inside it is deterministic at construction
-            // time and never depends on resize-event timing.
+            // Fixed-height right-side panel, seeded from the header height so
+            // button positioning is deterministic at construction time instead
+            // of waiting for the parent's first layout pass.
             _buttonBar = new Panel
             {
                 Dock = DockStyle.Right,
-                Width = DpiAwareService.Scale(170),
-                Height = Height // seed from HeaderControl's own Height (already
-                                 // set) — Dock hasn't parented this yet, so its
-                                 // own Height would otherwise still be the
-                                 // Panel default, not the real header height.
+                Height = HeaderHeight
             };
 
-            BtnSettings = HeaderButtonService.CreateLabeledButton("Settings", IconChar.Gear, BtnSettings_Click);
-            BtnTheme = HeaderButtonService.CreateIconOnlyButton(
-                _themeManager.IsDarkTheme ? IconChar.Sun : IconChar.Moon,
-                _themeManager.IsDarkTheme ? "Switch to Light Mode" : "Switch to Dark Mode",
-                BtnTheme_Click,
-                _toolTip);
+            BuildActionButtons();
 
-            _buttonBar.Controls.Add(BtnSettings);
-            _buttonBar.Controls.Add(BtnTheme);
-            PositionButtons();
-
-            LblSystemSummary = new Label
-            {
-                Text = "Loading system information...",
-                Font = new Font("Segoe UI", 9f, FontStyle.Regular),
-                BackColor = Color.Transparent,
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Dock = DockStyle.Fill,
-                Padding = new Padding(DpiAwareService.Scale(16), 0, 0, 0)
-            };
+            // ── System summary (left side) ────────────────────────────────────
+            _summaryStrip = BuildSummaryStrip();
+            SetSummaryText("Loading system information...");
 
             _leftAccent = new Panel { Dock = DockStyle.Left, Width = DpiAwareService.Scale(3) };
+            _bottomBorder = new Panel { Dock = DockStyle.Bottom, Height = DpiAwareService.Scale(1) };
 
-            // Add order (first → last): Fill content first (innermost), then
-            // Left accent, then Right button bar, then Bottom border — each
-            // later addition claims its edge from the full remaining area
-            // first. The Fill label and Right button bar never overlap in
-            // bounds, so z-order can't hide either one behind the other.
-            Controls.Add(LblSystemSummary);
+            // Add order (first → last): Fill strip first (innermost), then the
+            // left accent, the right button bar and the bottom border — each
+            // later addition claims its edge from the full area first. The
+            // strip and button bar never overlap, so neither hides the other.
+            Controls.Add(_summaryStrip);
             Controls.Add(_leftAccent);
             Controls.Add(_buttonBar);
-            Controls.Add(_bottomBorder = new Panel { Dock = DockStyle.Bottom, Height = DpiAwareService.Scale(1) });
+            Controls.Add(_bottomBorder);
         }
 
+        private void BuildActionButtons()
+        {
+            _btnSettings = CreateActionButton(IconChar.Gear, "Settings", BtnSettings_Click);
+
+            // Icon, colour and tooltip set by UpdateThemeButtonIcon.
+            _btnTheme = CreateActionButton(IconChar.None, string.Empty, BtnTheme_Click);
+
+            _buttonBar.Controls.AddRange(ActionButtons);
+
+            PositionButtons();
+        }
+
+        /// <summary>
+        /// Sizes the button bar to the button group and positions the buttons
+        /// right-to-left (Theme → Settings), vertically centred.
+        /// </summary>
         private void PositionButtons()
         {
+            if (_buttonBar == null) return;
+
+            var buttons = Array.FindAll(ActionButtons, b => b != null && b.Visible);
+            int rightMargin = DpiAwareService.Scale(12);
+
+            _buttonBar.Width = HeaderButtonService.GroupWidth(buttons, rightMargin) + DpiAwareService.Scale(8);
+
             HeaderButtonService.PositionButtonsRightAligned(
                 parentWidth: _buttonBar.Width,
                 parentHeight: _buttonBar.Height,
-                rightMargin: DpiAwareService.Scale(12),
-                buttons: new Button[] { BtnTheme, BtnSettings });
+                rightMargin: rightMargin,
+                buttons: buttons);
         }
+
+        private Button[] ActionButtons => new[] { _btnTheme, _btnSettings };
+
+        // ─────────────────────────────────────────────────────────────────────
+        // ACTIONS
+        // ─────────────────────────────────────────────────────────────────────
 
         private void BtnTheme_Click(object sender, EventArgs e)
         {
             _themeManager.ToggleTheme();
         }
+
         private void BtnSettings_Click(object sender, EventArgs e)
         {
             using var dlg = new SettingsDialog();
             dlg.ShowDialog(this.FindForm());
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // THEME
-        // ─────────────────────────────────────────────────────────────────────
-
-        public void ApplyTheme()
+        protected override void Dispose(bool disposing)
         {
-            BackColor = _themeManager.CurrentTheme.HeaderBackground;
-            _bottomBorder.BackColor = _themeManager.CurrentTheme.BorderColor;
-            _leftAccent.BackColor = HeaderButtonService.BrandColor;
-            _buttonBar.BackColor = _themeManager.CurrentTheme.HeaderBackground;
+            if (disposing)
+                _toolTip?.Dispose();
 
-            LblSystemSummary.BackColor = Color.Transparent;
-            LblSystemSummary.ForeColor = _themeManager.CurrentTheme.TextColor;
-
-            foreach (var btn in new[] { BtnSettings, BtnTheme })
-                HeaderButtonService.ApplyBrandStyle(btn);
-
-            UpdateThemeButtonIcon();
-        }
-
-        public void UpdateThemeButtonIcon()
-        {
-            if (BtnTheme is not IconButton iconBtn) return;
-
-            bool isDark = _themeManager.IsDarkTheme;
-            iconBtn.IconChar = isDark ? IconChar.Sun : IconChar.Moon;
-
-            _toolTip.SetToolTip(BtnTheme, isDark ? "Switch to Light Mode" : "Switch to Dark Mode");
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // DPI REFRESH
-        // ─────────────────────────────────────────────────────────────────────
-
-        public void RefreshForDpi()
-        {
-            Height = DpiAwareService.Scale(AppConfig.HeaderHeight);
-            _buttonBar.Width = DpiAwareService.Scale(170);
-            _buttonBar.Height = Height;
-
-            int btnH = HeaderButtonService.ButtonHeight;
-            BtnSettings.Size = new Size(HeaderButtonService.MeasureButtonWidth("Settings"), btnH);
-            BtnTheme.Size = new Size(HeaderButtonService.IconOnlyWidth, btnH);
-
-            PositionButtons();
+            base.Dispose(disposing);
         }
     }
 }

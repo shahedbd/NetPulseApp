@@ -7,6 +7,23 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Update Header control by following my latest project pattern: (/UserControls/Layout/HeaderControl)
+G:\src\MS_Store_App\CpuZxPro\CpuZXPro
+
+
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.
+
+
+
+
+
+
 Understand project doc:
 G:\src\MS_Store_App\NetPulseApp\doc
 
