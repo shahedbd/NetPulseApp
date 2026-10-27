@@ -45,5 +45,6 @@ public enum IconChar
     Times = 0xF00D,
     TimesCircle = 0xF057,
     TriangleExclamation = 0xF071,
+    Upload = 0xF093,
     WindowRestore = 0xF2D2,
 }

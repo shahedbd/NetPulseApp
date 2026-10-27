@@ -63,12 +63,13 @@ namespace NetPulseApp.UserControls.Pages
         {
             if (IsDisposed) return;
 
-            _tileLatency.UpdateValue(result.RoundtripMs.HasValue
-                ? $"{result.RoundtripMs} ms" : "Timeout");
-            _tileLatency.UpdateSubText($"min/avg/max {stats.MinAvgMaxText}");
+            _tileLatency.SetData(
+                result.RoundtripMs.HasValue ? $"{result.RoundtripMs} ms" : "Timeout",
+                $"min/avg/max {stats.MinAvgMaxText}");
 
-            _tileLoss.UpdateValue($"{stats.LossPercent:0.#}%");
-            _tileLoss.UpdateSubText($"{stats.Received}/{stats.Sent} replies");
+            _tileLoss.SetData(
+                $"{stats.LossPercent:0.#}%",
+                $"{stats.Received}/{stats.Sent} replies");
 
             _graph.AddPoint(result.ElapsedSec, result.RoundtripMs);
         }
@@ -77,8 +78,8 @@ namespace NetPulseApp.UserControls.Pages
         {
             if (IsDisposed) return;
 
-            _tileDown.UpdateValue($"{snap.DownloadMbps:0.0} Mbps");
-            _tileUp.UpdateValue($"{snap.UploadMbps:0.0} Mbps");
+            _tileDown.SetData($"{snap.DownloadMbps:0.0} Mbps");
+            _tileUp.SetData($"{snap.UploadMbps:0.0} Mbps");
 
             _connectionValues["INTERFACE"].Text = snap.InterfaceName;
             _connectionValues["TYPE"].Text = snap.InterfaceType;

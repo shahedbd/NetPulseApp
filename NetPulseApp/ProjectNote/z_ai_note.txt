@@ -7,6 +7,20 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now review:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Feature_Recommendations.md
+
+
+
+
+
+Use dashboard datacard by follwing this pattern:
+G:\src\MS_Store_App\WiFiPasswordViewer\WiFiPasswordViewer\UserControls\Lib\DataCard
+
+
+
+
+
 Now fix know bug: 
 -app minimize into taskbar and mosue click thren app got hang.
 
@@ -18,11 +32,6 @@ Now fix in the project and template re use project too:
 G:\src\MS_Store_App\DesktopAppTemplate
 
 
-
-
-
-Now review:
-G:\src\MS_Store_App\NetPulseApp\doc\MVP_Feature_Recommendations.md
 
 
 

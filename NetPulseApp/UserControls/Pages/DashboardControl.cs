@@ -4,12 +4,13 @@ using NetPulseApp.Service.Icons;
 using NetPulseApp.Service.Network;
 using NetPulseApp.UiComponent;
 using NetPulseApp.UserControls.Lib;
+using NetPulseApp.UserControls.Lib.DataCard;
 
 namespace NetPulseApp.UserControls.Pages
 {
     /// <summary>
     /// Dashboard tool page (doc/NetPulse_Toolkit_UI_Images/01_Dashboard_Running.png):
-    /// live network overview — four stat tiles (latency, download,
+    /// live network overview — four data cards (latency, download,
     /// upload, packet loss) fed by a monitor ping and interface counters,
     /// a reused LatencyGraphControl, a connection info card, and a
     /// Running badge with a Pause/Resume control. Layout/theme/teardown
@@ -21,11 +22,11 @@ namespace NetPulseApp.UserControls.Pages
         private Label _subtitle;
         private Label _badge;
         private IconButton _btnToggle;
-        private Panel _statRow;
-        private StatTileControl _tileLatency;
-        private StatTileControl _tileDown;
-        private StatTileControl _tileUp;
-        private StatTileControl _tileLoss;
+        private DataCardGrid _statRow;
+        private DataCardControl _tileLatency;
+        private DataCardControl _tileDown;
+        private DataCardControl _tileUp;
+        private DataCardControl _tileLoss;
         private LatencyGraphControl _graph;
         private Panel _connectionCard;
         private readonly List<Label> _connectionCaptions = new();
@@ -89,31 +90,32 @@ namespace NetPulseApp.UserControls.Pages
 
         private void BuildStatRow()
         {
-            _statRow = new Panel { Dock = DockStyle.Top, Height = Scale(84), BackColor = Color.Transparent };
+            // Equal-width 4-up row — DataCardGrid re-flows on resize itself.
+            _statRow = new DataCardGrid { Dock = DockStyle.Top, Height = Scale(90), Gap = 12 };
 
-            _tileLatency = new StatTileControl(new StatTileControl.TileConfig(
-                "⚡", Color.FromArgb(59, 130, 246), "LATENCY", "— ms", "monitor ping", Color.FromArgb(59, 130, 246)));
-            _tileDown = new StatTileControl(new StatTileControl.TileConfig(
-                "⬇", Color.FromArgb(34, 197, 94), "DOWNLOAD", "0 Mbps", "current traffic", Color.FromArgb(34, 197, 94)));
-            _tileUp = new StatTileControl(new StatTileControl.TileConfig(
-                "⬆", Color.FromArgb(99, 102, 241), "UPLOAD", "0 Mbps", "current traffic", Color.FromArgb(99, 102, 241)));
-            _tileLoss = new StatTileControl(new StatTileControl.TileConfig(
-                "⚠", Color.FromArgb(244, 63, 94), "PACKET LOSS", "—", "monitor ping", Color.FromArgb(244, 63, 94)));
+            _tileLatency = AddCard(IconChar.Gauge, "LATENCY", DataCardAccents.Blue, "monitor ping");
+            _tileDown = AddCard(IconChar.Download, "DOWNLOAD", DataCardAccents.Green, "current traffic");
+            _tileUp = AddCard(IconChar.Upload, "UPLOAD", DataCardAccents.Purple, "current traffic");
+            _tileLoss = AddCard(IconChar.TriangleExclamation, "PACKET LOSS", DataCardAccents.Red, "monitor ping");
 
-            _statRow.Controls.Add(_tileLatency);
-            _statRow.Controls.Add(_tileDown);
-            _statRow.Controls.Add(_tileUp);
-            _statRow.Controls.Add(_tileLoss);
-            // Even 4-up layout, re-flowed whenever the page resizes.
-            _statRow.Resize += (s, e) =>
-            {
-                int gap = Scale(12);
-                int tileW = Math.Max(Scale(120), (_statRow.Width - gap * 3) / 4);
-                var tiles = new[] { _tileLatency, _tileDown, _tileUp, _tileLoss };
-                for (int i = 0; i < tiles.Length; i++)
-                    tiles[i].SetBounds(i * (tileW + gap), 0, tileW, _statRow.Height);
-            };
             Controls.Add(_statRow);
+        }
+
+        /// <summary>Card shows a loading skeleton until its first live value arrives.</summary>
+        private DataCardControl AddCard(IconChar icon, string caption, Color accent, string subText)
+        {
+            var card = _statRow.AddCard(new DataCardControl(icon, caption, accent));
+            card.SubText = subText;
+            card.IsLoading = true;
+            return card;
+        }
+
+        private DataCardPalette CurrentPalette()
+        {
+            var t = themeManager.CurrentTheme;
+            return DataCardPalette.From(
+                t.CardBackground, t.BorderColor, t.TextColor,
+                t.SecondaryTextColor, themeManager.IsDarkTheme);
         }
 
         private void BuildGraph()
@@ -192,12 +194,8 @@ namespace NetPulseApp.UserControls.Pages
                 cap.ForeColor = theme.SecondaryTextColor;
             foreach (var val in _connectionValues.Values)
                 val.ForeColor = theme.TextColor;
-            // StatTileControl doesn't subscribe to theme changes itself —
-            // rebuild the tiles so their card/icon colors follow.
-            _tileLatency.Rebuild();
-            _tileDown.Rebuild();
-            _tileUp.Rebuild();
-            _tileLoss.Rebuild();
+            // Data cards are theme-agnostic — map the theme onto their palette.
+            _statRow.ApplyPalette(CurrentPalette());
             _graph.ApplyTheme();
             ApplyBadgeTheme();
         }
