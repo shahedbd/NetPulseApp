@@ -19,6 +19,7 @@ namespace NetPulseApp.Forms
         private Panel mainAreaPanel;
         private TitleBarControl _titleBar;
         private HeaderControl _header;
+        private StatusBarControl _statusBar;
         private SidebarControl _sidebar;
         private NavigationManager _navigationManager;
         private ThemeManager themeManager;
@@ -105,6 +106,7 @@ namespace NetPulseApp.Forms
         {
             // Header owns its summary load — HeaderControl.SystemSummary.cs.
             _header?.LoadSystemSummary();
+            _statusBar?.Start();
         }
 
         private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
@@ -114,6 +116,7 @@ namespace NetPulseApp.Forms
             {
                 _titleBar?.RefreshForDpi();
                 _header?.RefreshForDpi();
+                _statusBar?.RefreshForDpi();
                 _sidebar?.RefreshForDpi();
             }
             finally
@@ -134,10 +137,12 @@ namespace NetPulseApp.Forms
             };
 
             _header = new HeaderControl();
+            _statusBar = new StatusBarControl();
 
-            // Content (Fill) added first, Header (Top) added last so it
-            // claims the top strip of mainAreaPanel and content fills the rest.
+            // Content (Fill) added first, then StatusBar (Bottom) and Header
+            // (Top) so they claim their strips and content fills the rest.
             mainAreaPanel.Controls.Add(contentPanel);
+            mainAreaPanel.Controls.Add(_statusBar);
             mainAreaPanel.Controls.Add(_header);
 
             Controls.Add(mainAreaPanel);
@@ -165,6 +170,7 @@ namespace NetPulseApp.Forms
         {
             _titleBar?.ApplyTheme();
             _header?.ApplyTheme();
+            _statusBar?.ApplyTheme();
             _sidebar?.ApplyTheme();
 
             if (contentPanel != null)

@@ -18,7 +18,9 @@ public enum IconChar
     None = 0,
 
     AddressCard = 0xF2BB,
+    ArrowsRotate = 0xF2F1,
     Bars = 0xF0C9,
+    Calculator = 0xF1EC,
     CheckCircle = 0xF058,
     Clock = 0xF017,
     Copy = 0xF0C5,
@@ -38,6 +40,7 @@ public enum IconChar
     PowerOff = 0xF011,
     SatelliteDish = 0xF7BF,
     Server = 0xF233,
+    ShieldHalved = 0xF3ED,
     Star = 0xF005,
     Stop = 0xF04D,
     Trash = 0xF1F8,
@@ -46,5 +49,6 @@ public enum IconChar
     TimesCircle = 0xF057,
     TriangleExclamation = 0xF071,
     Upload = 0xF093,
+    WaveSquare = 0xF83E,
     WindowRestore = 0xF2D2,
 }

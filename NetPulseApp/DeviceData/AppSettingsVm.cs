@@ -41,5 +41,23 @@
         /// WHOIS IP page's target dropdown. Capped by the page on save.</summary>
         public List<string> WhoisTargets { get; set; } = new();
 
+        // ── Public IP lookup (Service/IpDataService.cs) ──────────────────
+        public bool PreferIpv4 { get; set; } = true;
+        public IpProvider PreferredProvider { get; set; } = IpProvider.IpWhoIs;
+        public bool ApiAutoFallback { get; set; } = true;
+
+    }
+
+    /// <summary>
+    /// Preferred external IP/geolocation provider. The app always falls back
+    /// through the remaining providers when <see cref="AppSettingsVm.ApiAutoFallback"/>
+    /// is true — this only chooses which one is tried first. Keyless providers
+    /// only: an API key shipped inside an MSIX is extractable.
+    /// </summary>
+    public enum IpProvider
+    {
+        IpWhoIs = 0,      // ipwho.is        — no key, HTTPS, full geo + ASN
+        IpApiCo = 1,      // ipapi.co        — no key, HTTPS, full geo
+        Cloudflare = 2    // /cdn-cgi/trace  — no key, IP + country only (last resort)
     }
 }

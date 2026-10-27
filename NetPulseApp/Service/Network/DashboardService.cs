@@ -117,7 +117,7 @@ namespace NetPulseApp.Service.Network
 
         /// <summary>Best-guess "the" interface: up, not virtual/loopback,
         /// with an IPv4 address — preferring physical adapters.</summary>
-        private static NetworkInterface FindActiveInterface() =>
+        internal static NetworkInterface FindActiveInterface() =>
             NetworkInterface.GetAllNetworkInterfaces()
                 .Where(n => n.OperationalStatus == OperationalStatus.Up
                             && n.NetworkInterfaceType != NetworkInterfaceType.Loopback

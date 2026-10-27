@@ -11,9 +11,9 @@ Status key: ☐ Todo · ◐ In progress · ☑ Done · ⏸ Blocked / waiting on 
 
 | Feature | Sprint | Est. | Main reuse source | Status |
 |---|---|---|---|---|
-| F2 Public IP card + status bar | S1 | 0.5 d | IpAddressApp | ☐ Todo |
-| F5 Jitter + quality score | S1 | 0.5 d | NetPulse `PingService` | ☐ Todo |
-| F7 Subnet Calculator | S1 | 1 d | — (new, pure math) | ☐ Todo |
+| F2 Public IP card + status bar | S1 | 0.5 d | IpAddressApp | ◐ Built, awaiting build/QA |
+| F5 Jitter + quality score | S1 | 0.5 d | NetPulse `PingService` | ◐ Built, awaiting build/QA |
+| F7 Subnet Calculator | S1 | 1 d | — (new, pure math) | ◐ Built, awaiting build/QA |
 | F1 Diagnose My Connection ⭐ | S2 | 2–3 d | NetPulse services + IpAddressApp | ☐ Todo |
 | F3 Internet Speed Test | S3 | 0.5–1 d | WiFiPasswordViewer | ☐ Todo |
 | F4 Wi-Fi Info / Signal panel | S3 | 1 d | WiFiPasswordViewer | ☐ Todo |
@@ -67,27 +67,27 @@ F6 Tray monitor (after F2 + F5: NetworkChangeMonitor + quality thresholds)
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 2.1 | Copy the IP provider chain + cache from IpAddressApp | `Service/Ip/*`, `Service/IpDataService.cs` | ☐ |
-| 2.2 | Copy `VpnDetector` and `NetworkChangeMonitor` | `Service/Privacy/`, `Service/` | ☐ |
-| 2.3 | Dashboard: add Public IP / ISP / Location rows, a VPN badge, Copy and Refresh | `DashboardControl.cs` / `.Run.cs` | ☐ |
-| 2.4 | Shell status bar: `● Online · Local IP · Public IP` | `UserControls/Layout/StatusBarControl.cs` (new), `MainForm.cs` | ☐ |
+| 2.1 | Copy the IP provider chain + cache from IpAddressApp | `Service/Ip/*`, `Service/IpDataService.cs` | ☑ |
+| 2.2 | Copy `VpnDetector` and `NetworkChangeMonitor` | `Service/Privacy/`, `Service/` | ☑ |
+| 2.3 | Dashboard: add Public IP / ISP / Location rows, a VPN badge, Copy and Refresh | `DashboardControl.cs` / `.Run.cs` | ☑ |
+| 2.4 | Shell status bar: `● Online · Local IP · Public IP` | `UserControls/Layout/StatusBarControl.cs` (new), `MainForm.cs` | ☑ |
 
 ### F5 — Jitter + quality score · S1
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 5.1 | Add `Jitter` to `PingStats` (mean absolute RTT delta) | `Service/Network/PingService.cs` | ☐ |
-| 5.2 | `QualityScore`: A–F grade + "Good for: Gaming / Calls / 4K" thresholds table | `Service/Network/QualityScore.cs` (new) | ☐ |
-| 5.3 | Add a Jitter `DataCard`; show the grade as the Latency card `Badge` | `DashboardControl.cs` / `.Run.cs` | ☐ |
-| 5.4 | Rename the Down/Up cards "Current …", and show **Idle** under 0.1 Mbps | `DashboardControl.Run.cs` | ☐ |
+| 5.1 | Add `Jitter` to `PingStats` (mean absolute RTT delta) | `Service/Network/PingService.cs` | ☑ |
+| 5.2 | `QualityScore`: A–F grade + "Good for: Gaming / Calls / 4K" thresholds table | `Service/Network/QualityScore.cs` (new) | ☑ |
+| 5.3 | Add a Jitter `DataCard`; show the grade as the Latency card `Badge` | `DashboardControl.cs` / `.Run.cs` | ☑ |
+| 5.4 | Rename the Down/Up cards "Current …", and show **Idle** under 0.1 Mbps | `DashboardControl.Run.cs` | ☑ |
 
 ### F7 — Subnet Calculator · S1
 
 | # | Task | Files | Status |
 |---|---|---|---|
-| 7.1 | `SubnetCalculator`: CIDR ↔ mask, network, broadcast, host range/count, wildcard; IPv6 prefix basics | `Service/Network/SubnetCalculator.cs` (new) | ☐ |
-| 7.2 | Page: input, results in `ResultsTableControl`, Copy | `UserControls/Pages/SubnetCalcControl.cs` (new) | ☐ |
-| 7.3 | Replace the Tab Two nav item and delete `TabTwoControl.cs` | `Helper/AppConfig.cs` | ☐ |
+| 7.1 | `SubnetCalculator`: CIDR ↔ mask, network, broadcast, host range/count, wildcard; IPv6 prefix basics | `Service/Network/SubnetCalculator.cs` (new) | ☑ |
+| 7.2 | Page: input, results in `ResultsTableControl`, Copy | `UserControls/Pages/SubnetCalcControl.cs` (new) | ☑ |
+| 7.3 | Replace the Tab Two nav item and delete `TabTwoControl.cs` | `Helper/AppConfig.cs` | ☑ |
 
 ### F1 — Diagnose My Connection ⭐ · S2
 

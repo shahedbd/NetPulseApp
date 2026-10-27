@@ -29,6 +29,14 @@ namespace NetPulseApp.Service.Network
         public double LossPercent => Sent == 0 ? 0 : 100.0 * Lost / Sent;
         public double Avg => Received == 0 ? 0 : Sum / Received;
 
+        /// <summary>Previous reply's RTT — jitter is measured between consecutive replies.</summary>
+        public long? LastRtt { get; set; }
+        public double JitterSum { get; set; }
+        public int JitterSamples { get; set; }
+
+        /// <summary>Mean absolute RTT delta between consecutive replies (ms).</summary>
+        public double Jitter => JitterSamples == 0 ? 0 : JitterSum / JitterSamples;
+
         /// <summary>"12/13.6/15 ms" summary text, "—" before the first reply.</summary>
         public string MinAvgMaxText =>
             Received == 0 ? "—" : $"{Min}/{Avg:0.#}/{Max} ms";
@@ -138,6 +146,12 @@ namespace NetPulseApp.Service.Network
                     stats.Sum += reply.RoundtripTime;
                     stats.Min = Math.Min(stats.Min, reply.RoundtripTime);
                     stats.Max = Math.Max(stats.Max, reply.RoundtripTime);
+                    if (stats.LastRtt.HasValue)
+                    {
+                        stats.JitterSum += Math.Abs(reply.RoundtripTime - stats.LastRtt.Value);
+                        stats.JitterSamples++;
+                    }
+                    stats.LastRtt = reply.RoundtripTime;
                 }
                 else
                 {

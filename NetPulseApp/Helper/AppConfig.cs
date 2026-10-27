@@ -34,6 +34,36 @@ namespace NetPulseApp.Helper
         public static string apiUrlProd = "https://storeapi.zerobytebd.com/api/deviceinstallationinfoapi/add-new";
         public static string CountryNameAPIServiceURL = "https://ipapi.co/country_name/";
 
+        // ── Public IP providers (Service/Ip/*, copied from IpAddressApp) ─────
+        // Keyless and HTTPS only. Order is priority order.
+        public static string IpWhoIsEndpoint = "https://ipwho.is/";
+        public static string IpApiCoEndpoint = "https://ipapi.co/json/";
+        public static string CloudflareTraceEndpoint = "https://1.1.1.1/cdn-cgi/trace";
+
+        /// <summary>Family-pinned public-address endpoints, each its own fallback chain.</summary>
+        public static List<string> Ipv4ProbeEndpoints = new()
+        {
+            "https://api4.ipify.org",
+            "https://ipv4.icanhazip.com",
+            "https://v4.ident.me"
+        };
+
+        public static List<string> Ipv6ProbeEndpoints = new()
+        {
+            "https://api6.ipify.org",
+            "https://ipv6.icanhazip.com",
+            "https://v6.ident.me"
+        };
+
+        /// <summary>Per-provider budget before the chain moves on.</summary>
+        public static int IpProviderTimeoutSeconds = 6;
+
+        /// <summary>Per-endpoint budget for one address probe.</summary>
+        public static int IpProbeTimeoutSeconds = 4;
+
+        /// <summary>How long a successful lookup counts as current (avoids free-tier rate limits).</summary>
+        public static int IpFreshnessSeconds = 60;
+
         // ── System tray ──────────────────────────────────────────────────────
         // When true, closing the window hides it to the tray instead of
         // exiting (restore via the tray icon's "Show App" / double-click, or
@@ -93,8 +123,8 @@ namespace NetPulseApp.Helper
             new NavItem { Label = "DNS Lookup", Icon = IconChar.MagnifyingGlass, IconColor = Color.FromArgb(6, 182, 212), ControlType = typeof(DnsLookupControl) },
             new NavItem { Label = "Port Checker", Icon = IconChar.Plug,      IconColor = Color.FromArgb(20, 184, 166),  ControlType = typeof(PortCheckerControl) },
             new NavItem { Label = "WHOIS IP",   Icon = IconChar.AddressCard,  IconColor = Color.FromArgb(244, 63, 94),   ControlType = typeof(WhoisControl)     },
+            new NavItem { Label = "Subnet Calc", Icon = IconChar.Calculator,   IconColor = Color.FromArgb(245, 158, 11),  ControlType = typeof(SubnetCalcControl) },
             new NavItem { Label = "Settings",  Icon = IconChar.Gear,          IconColor = Color.FromArgb(100, 116, 139), ControlType = typeof(SettingsPageControl) },
-            new NavItem { Label = "Tab Two",   Icon = IconChar.Server,        IconColor = Color.FromArgb(245, 158, 11),  ControlType = typeof(TabTwoControl)    },
             // ShowModal instead of ControlType — About is a dialog, not a
             // content page, so there's nothing to dock into the content panel.
             new NavItem { Label = "About",     Icon = IconChar.InfoCircle,    IconColor = Color.FromArgb(148, 163, 184), ShowModal = () => new AboutForm().ShowDialog() },

@@ -5,7 +5,8 @@ namespace NetPulseApp.UserControls.Pages
 {
     /// <summary>
     /// Dashboard page run logic: monitor lifecycle (interface snapshot
-    /// service + a continuous Ping reused for latency/loss), tile and
+    /// service + a continuous Ping reused for latency/jitter/loss and the
+    /// QualityScore grade), tile and
     /// graph updates, and the Running badge. Layout/theme live in
     /// DashboardControl.cs.
     /// </summary>
@@ -66,6 +67,11 @@ namespace NetPulseApp.UserControls.Pages
             _tileLatency.SetData(
                 result.RoundtripMs.HasValue ? $"{result.RoundtripMs} ms" : "Timeout",
                 $"min/avg/max {stats.MinAvgMaxText}");
+            ApplyGrade(QualityScore.Grade(stats));
+
+            _tileJitter.SetData(
+                stats.JitterSamples == 0 ? "—" : $"{stats.Jitter:0.#} ms",
+                $"Good for: {QualityScore.GoodFor(stats)}");
 
             _tileLoss.SetData(
                 $"{stats.LossPercent:0.#}%",
@@ -78,8 +84,8 @@ namespace NetPulseApp.UserControls.Pages
         {
             if (IsDisposed) return;
 
-            _tileDown.SetData($"{snap.DownloadMbps:0.0} Mbps");
-            _tileUp.SetData($"{snap.UploadMbps:0.0} Mbps");
+            _tileDown.SetData(FormatRate(snap.DownloadMbps));
+            _tileUp.SetData(FormatRate(snap.UploadMbps));
 
             _connectionValues["INTERFACE"].Text = snap.InterfaceName;
             _connectionValues["TYPE"].Text = snap.InterfaceType;
@@ -87,6 +93,24 @@ namespace NetPulseApp.UserControls.Pages
             _connectionValues["GATEWAY"].Text = snap.Gateway;
             _connectionValues["DNS SERVER"].Text = snap.DnsServer;
             _connectionValues["MAC ADDRESS"].Text = snap.MacAddress;
+        }
+
+        /// <summary>Below 0.1 Mbps the link is effectively idle, not "slow".</summary>
+        private static string FormatRate(double mbps) =>
+            mbps < 0.1 ? "Idle" : $"{mbps:0.0} Mbps";
+
+        /// <summary>Connection grade as the Latency card's badge.</summary>
+        private void ApplyGrade(char? grade)
+        {
+            var theme = themeManager.CurrentTheme;
+            _tileLatency.Badge = grade.HasValue ? $"Grade {grade}" : "";
+            _tileLatency.BadgeColor = QualityScore.Level(grade) switch
+            {
+                QualityLevel.Good => theme.SuccessColor,
+                QualityLevel.Fair => theme.WarningColor,
+                QualityLevel.Poor => theme.ErrorColor,
+                _ => null
+            };
         }
 
         private void ApplyBadgeTheme()

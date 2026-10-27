@@ -10,11 +10,12 @@ namespace NetPulseApp.UserControls.Pages
 {
     /// <summary>
     /// Dashboard tool page (doc/NetPulse_Toolkit_UI_Images/01_Dashboard_Running.png):
-    /// live network overview — four data cards (latency, download,
-    /// upload, packet loss) fed by a monitor ping and interface counters,
-    /// a reused LatencyGraphControl, a connection info card, and a
-    /// Running badge with a Pause/Resume control. Layout/theme/teardown
-    /// here; monitor wiring in DashboardControl.Run.cs.
+    /// live network overview — five data cards (latency + grade, jitter,
+    /// download, upload, packet loss) fed by a monitor ping and interface
+    /// counters, a reused LatencyGraphControl, a connection info card with
+    /// public IP / ISP / location, and a Running badge with a Pause/Resume
+    /// control. Layout/theme/teardown here; monitor wiring in
+    /// DashboardControl.Run.cs; public IP in DashboardControl.PublicIp.cs.
     /// </summary>
     public partial class DashboardControl : DpiAwareUserControl
     {
@@ -24,6 +25,7 @@ namespace NetPulseApp.UserControls.Pages
         private IconButton _btnToggle;
         private DataCardGrid _statRow;
         private DataCardControl _tileLatency;
+        private DataCardControl _tileJitter;
         private DataCardControl _tileDown;
         private DataCardControl _tileUp;
         private DataCardControl _tileLoss;
@@ -48,6 +50,7 @@ namespace NetPulseApp.UserControls.Pages
             WireMonitor();
             ApplyTheme();
             StartMonitor();
+            StartPublicIp();
 
             themeManager.ThemeChanged += OnThemeChanged;
         }
@@ -90,12 +93,13 @@ namespace NetPulseApp.UserControls.Pages
 
         private void BuildStatRow()
         {
-            // Equal-width 4-up row — DataCardGrid re-flows on resize itself.
+            // Equal-width 5-up row — DataCardGrid re-flows on resize itself.
             _statRow = new DataCardGrid { Dock = DockStyle.Top, Height = Scale(90), Gap = 12 };
 
             _tileLatency = AddCard(IconChar.Gauge, "LATENCY", DataCardAccents.Blue, "monitor ping");
-            _tileDown = AddCard(IconChar.Download, "DOWNLOAD", DataCardAccents.Green, "current traffic");
-            _tileUp = AddCard(IconChar.Upload, "UPLOAD", DataCardAccents.Purple, "current traffic");
+            _tileJitter = AddCard(IconChar.WaveSquare, "JITTER", DataCardAccents.Amber, "monitor ping");
+            _tileDown = AddCard(IconChar.Download, "CURRENT DOWNLOAD", DataCardAccents.Green, "current traffic");
+            _tileUp = AddCard(IconChar.Upload, "CURRENT UPLOAD", DataCardAccents.Purple, "current traffic");
             _tileLoss = AddCard(IconChar.TriangleExclamation, "PACKET LOSS", DataCardAccents.Red, "monitor ping");
 
             Controls.Add(_statRow);
@@ -128,7 +132,7 @@ namespace NetPulseApp.UserControls.Pages
         {
             _connectionCard = ToolUiFactory.Card();
             _connectionCard.Dock = DockStyle.Top;
-            _connectionCard.Height = Scale(196);
+            _connectionCard.Height = Scale(274);
 
             var caption = new Label
             {
@@ -143,7 +147,8 @@ namespace NetPulseApp.UserControls.Pages
             _connectionCaptions.Add(caption);
 
             int y = Scale(32);
-            foreach (var field in new[] { "INTERFACE", "TYPE", "IP ADDRESS", "GATEWAY", "DNS SERVER", "MAC ADDRESS" })
+            foreach (var field in new[] { "INTERFACE", "TYPE", "IP ADDRESS", "GATEWAY", "DNS SERVER", "MAC ADDRESS",
+                                          "PUBLIC IP", "ISP", "LOCATION" })
             {
                 var cap = new Label
                 {
@@ -170,6 +175,7 @@ namespace NetPulseApp.UserControls.Pages
                 y += Scale(26);
             }
 
+            BuildPublicIpActions();
             Controls.Add(_connectionCard);
         }
 
@@ -190,6 +196,7 @@ namespace NetPulseApp.UserControls.Pages
             _subtitle.ForeColor = theme.SecondaryTextColor;
             ToolUiFactory.ApplyGhostTheme(_btnToggle);
             ToolUiFactory.ApplyCardTheme(_connectionCard);
+            ApplyPublicIpTheme();
             foreach (var cap in _connectionCaptions)
                 cap.ForeColor = theme.SecondaryTextColor;
             foreach (var val in _connectionValues.Values)
@@ -207,6 +214,7 @@ namespace NetPulseApp.UserControls.Pages
                 themeManager.ThemeChanged -= OnThemeChanged;
                 StopMonitor();
                 DisposeServices();
+                DisposePublicIp();
             }
             base.Dispose(disposing);
         }
