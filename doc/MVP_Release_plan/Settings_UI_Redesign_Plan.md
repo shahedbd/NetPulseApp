@@ -1,7 +1,7 @@
 # NetPulse — Settings Tab Redesign Plan
 
 **Pattern source:** `G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\UserControls\Pages\Settings\*`
-**Branch:** `dev` · **Written:** 2026-10-28 · **Estimate:** ≈ 1.5–2 working days
+**Branch:** `dev` · **Written:** 2026-10-28 · **Status:** S.1–S.6 built, awaiting build/QA · **Estimate:** ≈ 1.5–2 working days
 
 Status key: ☐ Todo · ◐ In progress · ☑ Done · ⏸ Blocked / waiting on a decision
 
@@ -42,7 +42,7 @@ Status key: ☐ Todo · ◐ In progress · ☑ Done · ⏸ Blocked / waiting on 
 
 NetPulse already has `SettingsRowControl`, `SettingsStyle`, `ToggleSwitchControl`, `ModernDropDown`, `AlertNotificationService` and `ToastsNotificationManager`. Only the files in the `Settings/` folder are new.
 
-**One difference from NetSpeedMeterPlus:** there, a theme switch rebuilds the whole page (`NavigationManager.RefreshActivePage`). NetPulse pages re-theme in place through `ThemeManager.ThemeChanged` → `ApplyTheme()`, as the current page does. Keep the NetPulse way: each category gets an `ApplyTheme(AppTheme)` override, and nothing needs `BeginInvoke` tricks to survive its own disposal.
+**One difference from NetSpeedMeterPlus:** there, a theme switch rebuilds the whole page through `NavigationManager.RefreshActivePage`, which NetPulse doesn't have. Here the page handles `ThemeManager.ThemeChanged` itself: it waits for the current click to finish (`BeginInvoke`), then rebuilds its own controls in place and reopens the same category or search (`LastState`). Categories don't need per-control `ApplyTheme` code.
 
 ---
 
@@ -118,15 +118,15 @@ The app's sidebar stays on the far left. The Settings page splits its own area i
   │  Minimize to tray when closing                       [ ●━ ]  │
   │  Keep running in the system tray after the window closes.    │
   │ ──────────────────────────────────────────────────────────── │
-  │  Start with sidebar collapsed                        [ ━○ ]  │
-  │  Show only icons in the left navigation.                     │
+  │  Collapse sidebar                                    [ ━○ ]  │
+  │  Show only icons in the left navigation. Remembered next time│
   └──────────────────────────────────────────────────────────────┘
 ```
 
 | Row | Control | Field | Reset value |
 |---|---|---|---|
 | Minimize to tray when closing | Toggle (disabled when `AppConfig.EnableSystemTray` is false) | `MinimizeToTrayOnClose` | On |
-| Start with sidebar collapsed | Toggle | `IsSidebarCollapsed` (already saved; also changed by the sidebar's own button) | Off |
+| Collapse sidebar | Toggle → `SidebarControl.SetCollapsed` (live, via `NavigationManager.Current.Sidebar`) | `IsSidebarCollapsed` (also changed by the sidebar's own button) | Off |
 
 > "Start with Windows" is left out on purpose. An MSIX app needs a `StartupTask` declaration in the package manifest, so it belongs with F6 monitoring (see D4).
 
@@ -231,14 +231,13 @@ New fields (F6): `MonitorEnabled`, `MonitorIntervalSec` (5 / 10 / 30), `NotifyOn
   ┌──────────────────────────────────────────────────────────────┐
   │  Network tools contact the hosts you enter, plus ipwho.is,   │
   │  ipapi.co and Cloudflare for public IP and speed tests.      │
-  │                                         [ Privacy policy ↗ ] │
   └──────────────────────────────────────────────────────────────┘
 ```
 
 | Row | Control | Field | Notes |
 |---|---|---|---|
 | Open folder | Ghost button → `explorer` on the AppData folder | — | Useful for support |
-| Privacy note + link | Note + link button | — | Same disclosure the Store listing needs |
+| Privacy note | Note | — | No privacy-policy link yet: `AppConfig` has no policy URL |
 
 `CanReset = false`.
 
@@ -299,6 +298,7 @@ UserControls/Pages/
 ├── SettingsPageControl.cs                 ← rewritten: state, nav, search, theme
 └── Settings/                              ← new folder
     ├── SettingsPageControl.Layout.cs      nav column, footer, sizing (port)
+    ├── SettingsPageControl.Narrow.cs      narrow-window dropdown mode (§3.10)
     ├── SettingsCategory.cs                base class (port + ApplyTheme)
     ├── SettingsCard.cs                    (port)
     ├── SettingsSearchResults.cs           (port)
@@ -321,12 +321,12 @@ Namespace: `NetPulseApp.UserControls.Pages.Settings`. Every row goes through `Ad
 
 | # | Task | Files | Est. | Status |
 |---|---|---|---|---|
-| S.1 | Port `SettingsCategory`, `SettingsCard`, `SettingsSearchResults`, `ThemePreviewCard`; switch to NetPulse `ThemeManager` / `SettingsService`; add `ApplyTheme` instead of rebuild-on-theme | `Settings/*.cs` | 0.5 d | ☐ |
-| S.2 | Rewrite `SettingsPageControl` as the shell: category column, group headings, search (Ctrl+F / Esc), footer with Reset page, `LastState` | `SettingsPageControl.cs`, `Settings/SettingsPageControl.Layout.cs` | 0.5 d | ☐ |
-| S.3 | Categories: Appearance, Behavior, Network & IP, Speed Test | `Settings/*Settings.cs` | 0.4 d | ☐ |
-| S.4 | Privacy & Data, Reset | `Settings/PrivacySettings.cs`, `ResetSettings.cs` | 0.2 d | ☐ |
-| S.5 | Header ⚙ / Settings button → `NavigationManager` opens the Settings page; delete `SettingsDialog` | `HeaderControl.cs`, `HeaderButtonService.cs`, `Forms/SettingsDialog.cs` | 0.1 d | ☐ |
-| S.6 | Narrow-window dropdown mode (3.10) | `Settings/SettingsPageControl.Layout.cs` | 0.2 d | ☐ |
+| S.1 | Port `SettingsCategory`, `SettingsCard`, `SettingsSearchResults`, `ThemePreviewCard`; switch to NetPulse `ThemeManager` / `SettingsService`; the page rebuilds in place on theme change | `Settings/*.cs` | 0.5 d | ◐ Built, awaiting build/QA |
+| S.2 | Rewrite `SettingsPageControl` as the shell: category column, group headings, search (Ctrl+F / Esc), footer with Reset page, `LastState` | `SettingsPageControl.cs`, `Settings/SettingsPageControl.Layout.cs` | 0.5 d | ◐ Built, awaiting build/QA |
+| S.3 | Categories: Appearance, Behavior, Network & IP, Speed Test | `Settings/*Settings.cs` | 0.4 d | ◐ Built, awaiting build/QA |
+| S.4 | Privacy & Data, Reset | `Settings/PrivacySettings.cs`, `ResetSettings.cs` | 0.2 d | ◐ Built, awaiting build/QA |
+| S.5 | Header ⚙ / Settings button → `NavigationManager` opens the Settings page; delete `SettingsDialog` | `HeaderControl.cs`, `HeaderButtonService.cs`, `Forms/SettingsDialog.cs` | 0.1 d | ◐ Built, awaiting build/QA |
+| S.6 | Narrow-window dropdown mode (3.10) | `Settings/SettingsPageControl.Layout.cs` | 0.2 d | ◐ Built, awaiting build/QA |
 | S.7 | QA: dark + light, 100 / 150 / 200 % DPI, search jump, reset per page, settings file survives restart | — | 0.2 d | ☐ |
 | 6.4 | (F6) Monitoring category | `Settings/MonitoringSettings.cs` | with F6 | ☐ |
 

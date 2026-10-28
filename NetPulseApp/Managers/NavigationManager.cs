@@ -15,6 +15,9 @@ namespace NetPulseApp.Managers
         /// <summary>The shell's manager — lets a page link to another page (e.g. Dashboard → Diagnose).</summary>
         public static NavigationManager Current { get; private set; }
 
+        /// <summary>The shell's sidebar — lets Settings collapse/expand it live.</summary>
+        public SidebarControl Sidebar { get; private set; }
+
         // ─────────────────────────────────────────────────────────────────────
         // SIDEBAR SETUP
         // ─────────────────────────────────────────────────────────────────────
@@ -28,6 +31,7 @@ namespace NetPulseApp.Managers
         public void BuildSidebar(SidebarControl sidebar, Panel contentPanel)
         {
             Current = this;
+            Sidebar = sidebar;
             Button firstPageButton = null;
 
             foreach (var item in AppConfig.NavItems)

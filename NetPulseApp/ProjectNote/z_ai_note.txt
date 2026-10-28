@@ -7,6 +7,25 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+By following doc:
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\Settings_UI_Redesign_Plan.md
+
+Start implementing: 5. Tasks
+One by one: S.1, S.2, S.3, S.4, S.5, S.6
+
+- Keep files small: Target ≤300 lines; 400 lines absolute maximum. Split large files into focused modules.
+- Skip build, test, publish, deployment, migration, and package commands unless explicitly requested; I will handle them.
+- Optimize token usage: inspect only relevant files and make the smallest necessary changes.
+- Follow the existing architecture, documentation, patterns, naming conventions, and coding style.
+- Reuse existing code and dependencies; avoid unnecessary refactoring or new dependencies.
+- Preserve existing behavior unless the task requires otherwise.
+- Keep responses concise and report only important changes, affected files, and caveats.
+
+
+
+
+
+
 D3	Add a "Send anonymous install info" opt-out (default On)?	Yes, it matches the privacy-policy disclosure
 -remove this feature. 
 

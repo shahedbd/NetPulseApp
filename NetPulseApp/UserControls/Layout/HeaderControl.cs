@@ -135,8 +135,8 @@ namespace NetPulseApp.UserControls.Layout
 
         private void BtnSettings_Click(object sender, EventArgs e)
         {
-            using var dlg = new SettingsDialog();
-            dlg.ShowDialog(this.FindForm());
+            // One Settings entry point: the nav page (the old SettingsDialog duplicated it).
+            NavigationManager.Current?.NavigateTo(typeof(UserControls.Pages.SettingsPageControl));
         }
 
         private void BtnAbout_Click(object sender, EventArgs e)

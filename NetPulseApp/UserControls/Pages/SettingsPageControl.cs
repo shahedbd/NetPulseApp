@@ -1,201 +1,273 @@
 // UserControls/Pages/SettingsPageControl.cs
-using DeviceDataModule;
-using NetPulseApp.Forms;
-using NetPulseApp.Managers;
-using NetPulseApp.Service.Icons;
-using NetPulseApp.UiComponent;
 using NetPulseApp.UserControls.Lib;
+using NetPulseApp.UserControls.Pages.Settings;
 
 namespace NetPulseApp.UserControls.Pages
 {
     /// <summary>
-    /// Settings tool page (doc/NetPulse_Toolkit_UI_Images/07_Settings.png):
-    /// the app preferences previously buried in the header's Settings
-    /// dialog, as an in-app page in the tool style — section cards built
-    /// from SettingsRowControl rows. Only settings that actually exist
-    /// (theme, tray behavior, tool history) are shown; the header dialog
-    /// keeps working unchanged.
+    /// Settings tool page — its own category column (APP / TOOLS / DATA group
+    /// headings), a search box and a scrolling content pane, following
+    /// NetSpeedMeterPlus's Settings (doc/MVP_Release_plan/Settings_UI_Redesign_Plan.md).
+    /// Every change saves at once, so there is no Apply button.
     /// </summary>
-    public class SettingsPageControl : DpiAwareUserControl
+    /// <remarks>
+    /// This file owns state and navigation between categories and search;
+    /// <c>Settings/SettingsPageControl.Layout.cs</c> builds the chrome.
+    /// Categories are built the first time they're opened; typing in search
+    /// builds the rest, since search spans every category. A theme switch
+    /// rebuilds the page's controls in place (see <see cref="OnThemeChanged"/>).
+    /// Requires a public parameterless constructor (NavigationManager creates
+    /// pages via Activator.CreateInstance).
+    /// </remarks>
+    public partial class SettingsPageControl : DpiAwareUserControl
     {
-        private readonly ThemeManager _theme = ThemeManager.Instance;
+        /// <summary>
+        /// Survives the page being rebuilt or reopened — picking Light on
+        /// Appearance must leave the user on Appearance.
+        /// </summary>
+        private static class LastState
+        {
+            public static int Category;
+            public static string Search = "";
+        }
 
-        private Label _title;
-        private Label _subtitle;
-        private readonly List<Panel> _cards = new();
-        private readonly List<Label> _captions = new();
-        private readonly List<SettingsRowControl> _rows = new();
-        private ToggleSwitchControl _toggleDark;
-        private ToggleSwitchControl _toggleTray;
-        private IconButton _btnClearHistory;
+        private static readonly string[] CategoryNames =
+            { "Appearance", "Behavior", "Network & IP", "Speed Test", "Privacy & Data", "Reset" };
+
+        /// <summary>Group heading shown above the category at that index.</summary>
+        private static readonly Dictionary<int, string> GroupHeadings = new()
+        {
+            [0] = "APP",
+            [2] = "TOOLS",
+            [4] = "DATA"
+        };
+
+        private readonly Func<SettingsCategory>[] _factories;
+        private readonly SettingsCategory[] _categories;
+        private Control _shown;
+        private int _current = -1;
 
         public SettingsPageControl()
         {
-            BackColor = _theme.CurrentTheme.ContentBackground;
-            Padding = ScaledPadding(16, 0, 16, 16); // no top inset — header sits flush under the shell header
-
-            // Top-docked cards are claimed last-added-first, so add them
-            // bottom-up (see PingControl's docking notes) — display order
-            // ends up Header, Appearance, Behavior, Data.
-            BuildDataCard();
-            BuildBehaviorCard();
-            BuildAppearanceCard();
-            BuildHeader();
-
-            _theme.ThemeChanged += OnThemeChanged;
-            ApplyTheme();
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // LAYOUT
-        // ─────────────────────────────────────────────────────────────────────
-
-        private void BuildHeader()
-        {
-            var panel = new Panel { Dock = DockStyle.Top, Height = Scale(56), BackColor = Color.Transparent };
-            _title = ToolUiFactory.PageTitle("Settings");
-            _title.Location = new Point(0, Scale(2));
-            _subtitle = ToolUiFactory.PageSubtitle("Manage app preferences and tool behavior.");
-            _subtitle.Location = new Point(Scale(2), Scale(40)); // below the 20pt title's descenders
-            panel.Controls.Add(_subtitle);
-            panel.Controls.Add(_title);
-            Controls.Add(panel);
-        }
-
-        private void BuildAppearanceCard()
-        {
-            _toggleDark = new ToggleSwitchControl { Checked = _theme.IsDarkTheme };
-            _toggleDark.CheckedChanged += (s, e) => _theme.SetTheme(_toggleDark.Checked);
-
-            var row = new SettingsRowControl("Dark Mode", _toggleDark,
-                "Use the dark theme across the app.");
-            AddCard("Appearance", row);
-        }
-
-        private void BuildBehaviorCard()
-        {
-            _toggleTray = new ToggleSwitchControl
+            _factories = new Func<SettingsCategory>[]
             {
-                Checked = SettingsService.Current.MinimizeToTrayOnClose
+                () => new AppearanceSettings(),
+                () => new BehaviorSettings(),
+                () => new NetworkSettings(),
+                () => new SpeedTestSettings(),
+                () => new PrivacySettings(),
+                () => new ResetSettings(ResetAll),
             };
-            _toggleTray.CheckedChanged += (s, e) =>
-            {
-                SettingsService.Current.MinimizeToTrayOnClose = _toggleTray.Checked;
-                SettingsService.Save();
-            };
+            _categories = new SettingsCategory[_factories.Length];
 
-            var row = new SettingsRowControl("Minimize to tray when closing", _toggleTray,
-                "Keep running in the system tray after the window closes.");
-            AddCard("Behavior", row);
-            if (!Helper.AppConfig.EnableSystemTray)
-                row.SetEnabled(false);
+            Padding = ScaledPadding(16, 0, 16, 0); // no top inset — header sits flush under the shell header
+            BuildPage();
+
+            themeManager.ThemeChanged += OnThemeChanged;
         }
 
-        private void BuildDataCard()
+        /// <summary>Builds the chrome and reopens the last category or search.</summary>
+        private void BuildPage()
         {
-            _btnClearHistory = ToolUiFactory.GhostButton("Clear History", IconChar.Trash);
-            _btnClearHistory.Click += (s, e) => ClearToolHistory();
+            BackColor = themeManager.CurrentTheme.ContentBackground;
+            BuildChrome();
 
-            var row = new SettingsRowControl("Tool history", _btnClearHistory,
-                "Targets remembered by Ping, Traceroute, DNS Lookup, Port Checker and WHOIS IP.");
-            AddCard("Data", row);
+            if (LastState.Search.Length > 0)
+                _txtSearch.Text = LastState.Search; // TextChanged runs the search
+            else
+                ShowCategory(Math.Clamp(LastState.Category, 0, _factories.Length - 1));
         }
 
-        /// <summary>One section card: heading caption + rows, Top-docked.</summary>
-        private void AddCard(string captionText, params SettingsRowControl[] rows)
+        // ── Categories ────────────────────────────────────────────────────────
+
+        private SettingsCategory GetCategory(int index)
         {
-            var card = ToolUiFactory.Card();
-            card.Dock = DockStyle.Top;
+            if (_categories[index] is { IsDisposed: false } built) return built;
 
-            int y = Scale(12);
-            var caption = new Label
-            {
-                Text = captionText.ToUpperInvariant(),
-                Font = new Font("Segoe UI", 8f, FontStyle.Bold),
-                AutoSize = true,
-                BackColor = Color.Transparent,
-                Location = new Point(Scale(16), y)
-            };
-            card.Controls.Add(caption);
-            _captions.Add(caption);
-            y += Scale(24);
+            var category = _factories[index]();
+            category.Build();
+            return _categories[index] = category;
+        }
 
-            foreach (var row in rows)
+        private void ShowCategory(int index, Control scrollTo = null)
+        {
+            _current = index;
+            LastState.Category = index;
+            SetActiveNav(index);
+
+            var category = GetCategory(index);
+            ShowContent(category);
+            _btnReset.Visible = category.CanReset;
+
+            if (scrollTo != null && !scrollTo.IsDisposed)
             {
-                row.Location = new Point(Scale(16), y);
-                card.Controls.Add(row);
-                _rows.Add(row);
-                y += row.Height + row.Margin.Bottom;
+                _host.ScrollControlIntoView(scrollTo);
+                Flash(scrollTo);
+            }
+        }
+
+        /// <summary>Swaps the pane's content. Categories are kept (cached); search results are thrown away.</summary>
+        private void ShowContent(Control content)
+        {
+            _host.SuspendLayout();
+            if (_shown != null && _shown != content)
+            {
+                _host.Controls.Remove(_shown);
+                if (_shown is SettingsSearchResults) _shown.Dispose();
             }
 
-            card.Height = y + Scale(4);
-
-            // Rows hug the card's right edge; re-flow when the page resizes.
-            card.Resize += (s, e) =>
-            {
-                int contentWidth = card.Width - Scale(32);
-                foreach (Control c in card.Controls)
-                    if (c is SettingsRowControl r)
-                        r.SetWidth(contentWidth);
-            };
-
-            _cards.Add(card);
-            Controls.Add(card);
+            _shown = content;
+            content.Location = Point.Empty;
+            if (content.Parent != _host) _host.Controls.Add(content);
+            SizeContent();
+            _host.ResumeLayout(true);
+            _host.AutoScrollPosition = Point.Empty;
         }
 
-        private void ClearToolHistory()
+        /// <summary>Drops every cached category so the next open rebuilds it from saved values.</summary>
+        private void DisposeCategories()
         {
-            bool confirmed = AlertNotificationService.Confirm(
-                "This removes every remembered target from Ping, Traceroute, DNS Lookup, Port Checker and WHOIS IP. This cannot be undone.",
-                "Clear tool history?",
-                AlertMessageType.Warning,
-                "Clear",
-                "Cancel");
-            if (!confirmed)
-                return;
-
-            var settings = SettingsService.Current;
-            settings.PingTargets.Clear();
-            settings.TraceTargets.Clear();
-            settings.DnsTargets.Clear();
-            settings.PortCheckerHosts.Clear();
-            settings.WhoisTargets.Clear();
-            SettingsService.Save();
-            ToastsNotificationManager.Instance.ShowSuccessNotification("Tool history cleared.");
+            for (int i = 0; i < _categories.Length; i++)
+            {
+                var old = _categories[i];
+                _categories[i] = null;
+                if (old == null) continue;
+                if (_shown == old) { _host.Controls.Remove(old); _shown = null; }
+                old.Dispose();
+            }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // THEME + TEARDOWN
-        // ─────────────────────────────────────────────────────────────────────
+        private void ResetCurrentPage()
+        {
+            int index = _current;
+            var category = GetCategory(index);
 
+            // Deferred: resetting Appearance switches the theme, which rebuilds
+            // this page — not something to do inside the button's Click.
+            BeginInvoke(() =>
+            {
+                category.ResetToDefaults();
+                if (IsDisposed) return;
+                DisposeCategories();
+                ShowCategory(index);
+            });
+        }
+
+        /// <summary>Reset category's "Reset all…": every resettable category back to defaults.</summary>
+        private void ResetAll()
+        {
+            BeginInvoke(() =>
+            {
+                for (int i = 0; i < _factories.Length; i++)
+                {
+                    var category = GetCategory(i);
+                    if (category.CanReset) category.ResetToDefaults();
+                }
+                if (IsDisposed) return;
+                DisposeCategories();
+                ShowCategory(_current);
+            });
+        }
+
+        // ── Search ────────────────────────────────────────────────────────────
+
+        private void RunSearch()
+        {
+            string query = _txtSearch.Text.Trim();
+            LastState.Search = query;
+
+            if (query.Length == 0)
+            {
+                ShowCategory(LastState.Category);
+                return;
+            }
+
+            var entries = Enumerable.Range(0, _factories.Length).SelectMany(i => GetCategory(i).SearchEntries);
+            var results = new SettingsSearchResults(query, entries,
+                entry => BeginInvoke(() => OpenResult(entry)));
+
+            SetActiveNav(-1);
+            _btnReset.Visible = false;
+            ShowContent(results);
+        }
+
+        private void OpenResult(SettingsCategory.SearchEntry entry)
+        {
+            if (IsDisposed) return;
+            int index = Array.IndexOf(_categories, entry.Category);
+            if (index < 0) return;
+
+            // Clearing the box without re-running the search: we're leaving it on purpose.
+            ClearSearchSilently();
+            ShowCategory(index, entry.Target);
+        }
+
+        private void ClearSearchSilently()
+        {
+            _searchTimer.Stop();
+            _suppressSearch = true;
+            _txtSearch.Text = "";
+            _suppressSearch = false;
+            LastState.Search = "";
+        }
+
+        /// <summary>Ctrl+F anywhere on the page focuses search; Esc in the box clears it.</summary>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                _txtSearch.Focus();
+                _txtSearch.SelectAll();
+                return true;
+            }
+            if (keyData == Keys.Escape && _txtSearch.Focused && _txtSearch.TextLength > 0)
+            {
+                _txtSearch.Clear();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        // ── Highlight ─────────────────────────────────────────────────────────
+
+        /// <summary>A one-second tint so the eye finds the row a search result jumped to.</summary>
+        private void Flash(Control target)
+        {
+            var normal = target.BackColor;
+            var tint = themeManager.CurrentTheme.HoverColor;
+            var tinted = new List<Control> { target };
+            tinted.AddRange(target.Controls.Cast<Control>().Where(c => c is Label));
+
+            foreach (var c in tinted) c.BackColor = tint;
+
+            var timer = new System.Windows.Forms.Timer { Interval = 1000 };
+            timer.Tick += (s, e) =>
+            {
+                timer.Dispose();
+                foreach (var c in tinted.Where(c => !c.IsDisposed)) c.BackColor = normal;
+            };
+            timer.Start();
+        }
+
+        // ── Theme ─────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Colors are read at build time, so a theme switch (from Appearance or
+        /// the header button) rebuilds the page's controls in place. Deferred:
+        /// the switch may come from a click inside a control being disposed.
+        /// </summary>
         private void OnThemeChanged(object sender, EventArgs e)
         {
-            // Theme can be toggled from the header while this page is open —
-            // pull the switch back in sync (SetTheme no-ops on same values).
-            _toggleDark.Checked = _theme.IsDarkTheme;
-            ApplyTheme();
-        }
-
-        private void ApplyTheme()
-        {
-            var theme = _theme.CurrentTheme;
-            BackColor = theme.ContentBackground;
-            _title.ForeColor = theme.HeadingColor;
-            _subtitle.ForeColor = theme.SecondaryTextColor;
-            foreach (var card in _cards)
-                ToolUiFactory.ApplyCardTheme(card);
-            foreach (var caption in _captions)
-                caption.ForeColor = theme.SecondaryTextColor;
-            foreach (var row in _rows)
-                row.ApplyTheme(theme);
-            ToolUiFactory.ApplyGhostTheme(_btnClearHistory);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                _theme.ThemeChanged -= OnThemeChanged;
-            base.Dispose(disposing);
+            if (IsDisposed || !IsHandleCreated) return;
+            BeginInvoke(() =>
+            {
+                if (IsDisposed) return;
+                SuspendLayout();
+                DisposeCategories();
+                ClearChrome();
+                BuildPage();
+                ResumeLayout(true);
+            });
         }
     }
 }
