@@ -7,6 +7,13 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Now for production release, first MVP, test full appliation by tab features.
+
+Write fina test result by  tab features.
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan
+
+
 By following doc:
 G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus\Settings_UI_Redesign_Plan.md
 
