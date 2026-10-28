@@ -29,7 +29,7 @@ namespace DeviceDataModule
 
 
                             await Task.WhenAll(
-                               Utility.StartProcessAsync(AppConfig.CPUZxProMsStoreLink, 0),
+                               Utility.StartProcessAsync(AppConfig.NetSpeedMeterMsStoreLink, 0),
                                Utility.StartProcessAsync(randomToolUrl, 10)
                              );
 

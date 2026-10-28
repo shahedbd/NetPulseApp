@@ -13,7 +13,7 @@ namespace NetPulseApp.Helper
     public static class AppConfig
     {
         // ── App identity ─────────────────────────────────────────────────────
-        public static string AppName = "Net Pulse";
+        public static string AppName = "Net Pulse ZX";
         public static string AppSubtitle = "Network Diagnostic Toolkit";
         public static string AppVersion = "v1.0.0.0";
 
@@ -24,7 +24,8 @@ namespace NetPulseApp.Helper
         //Device Data Constants ─────────────────────────────────────────────────────
         public static int AppReleaseVersion = 1000;
         public static string AppDataFolderName = "NetPulseApp";
-        public static string NetSpeedPlusMsStoreLink = "ms-windows-store://pdp/?productid=9P00PF8JTJ1L";
+        public static string NetSpeedMeterMsStoreLink = "ms-windows-store://pdp/?productid=9NMBX01PXZ4L";
+        public static string NetSpeedMeterPlusMsStoreLink = "ms-windows-store://pdp/?productid=9P00PF8JTJ1L";
         public static string CPUZxMsStoreLink = "ms-windows-store://pdp/?productid=9P5G6W4FPNS2";
         public static string CPUZxProMsStoreLink = "ms-windows-store://pdp/?productid=9N5RXJCZB734";
 

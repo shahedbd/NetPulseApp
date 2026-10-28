@@ -1,5 +1,13 @@
 
+MS Store: 
+https://partner.microsoft.com/en-us/dashboard/products/9N9956QFQVCL/overview
+
 
 Src:
 https://github.com/shahedbd/NetPulseApp
 
+
+
+Package/Identity/Name	4789ZeroByte.NetPulseZX
+Package/Identity/Publisher	CN=8545CA03-A40F-42F8-9E80-790ABC2452FC
+Package/Properties/PublisherDisplayName	Zero Byte

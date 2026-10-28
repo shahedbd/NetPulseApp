@@ -35,7 +35,6 @@ namespace NetPulseApp.Forms
             Load += MainForm_Load;
             Shown += MainForm_Shown;
             DpiChanged += MainForm_DpiChanged;
-            _ = Task.Run(() => StartupService.ExecuteStartupTaskAsync());
         }
 
         // ─────────────────────────────────────────────────────────────────────
@@ -95,6 +94,7 @@ namespace NetPulseApp.Forms
                 InitializeTitleBar();
 
                 BeginInvoke(new Action(ApplyTheme));
+                _ = Task.Run(() => StartupService.ExecuteStartupTaskAsync());
             }
             finally
             {

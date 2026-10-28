@@ -361,9 +361,9 @@
     <Language Code="zu-za" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>4789ZeroByte.BatteryZX</MainPackageIdentityName>
+    <MainPackageIdentityName>4789ZeroByte.NetPulseZX</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>Battery ZX</ReservedName>
+      <ReservedName>Net Pulse ZX</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
