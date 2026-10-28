@@ -61,11 +61,18 @@ namespace NetPulseApp.Service.Network
             bool any = false;
             try
             {
-                bool isIp = IPAddress.TryParse(target, out _);
+                bool isIp = IPAddress.TryParse(target, out var ip);
                 string kind = isIp ? "ip" : "domain";
 
+                // IPs go in unescaped — rdap.org answers 400 to an IPv6
+                // address with its colons escaped (%3A). Rebuilding from the
+                // bytes normalises the text and drops any %scope suffix.
+                string path = isIp
+                    ? new IPAddress(ip.GetAddressBytes()).ToString()
+                    : Uri.EscapeDataString(target);
+
                 using var request = new HttpRequestMessage(HttpMethod.Get,
-                    $"https://rdap.org/{kind}/{Uri.EscapeDataString(target)}");
+                    $"https://rdap.org/{kind}/{path}");
                 request.Headers.Add("User-Agent", "NetPulseApp/1.0 (RDAP client)");
 
                 using var response = await Http.SendAsync(request, token);

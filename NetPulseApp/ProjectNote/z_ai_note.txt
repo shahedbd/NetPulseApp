@@ -7,6 +7,20 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+Understand app full doc:
+G:\src\MS_Store_App\NetPulseApp\doc
+
+Now create a on single doc and cover:
+-App short descriptiopns
+-App long descriptiopns
+-App core features: line by line
+
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\doc\App_Requirements
+
+
+
+
 Now for production release, first MVP, test full appliation by tab features.
 
 Write fina test result by  tab features.

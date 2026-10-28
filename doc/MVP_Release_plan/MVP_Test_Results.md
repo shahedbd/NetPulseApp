@@ -8,14 +8,14 @@
 
 ## 1. Verdict
 
-**Not ready to submit yet.** Every tab's feature works, but one item blocks the release and two bugs should be fixed first:
+**Not ready to submit yet.** Every tab's feature works. B2–B4 were fixed and re-tested the same day (see §6). B1 still blocks the release, and B5–B6 need a decision:
 
 | # | Severity | Area | Issue |
 |---|---|---|---|
 | B1 | **Blocker** | Packaging | `Package.appxmanifest` and `Package.StoreAssociation.xml` still have the **Battery ZX** identity: `Name="4789ZeroByte.BatteryZX"`, DisplayName "Battery ZX", a battery-app Description, and StartupTask `BatteryZxStartupTask`. Submitting this would ship as, or overwrite, Battery ZX. |
-| B2 | High | Port Checker | An unresolvable host (e.g. `no-such-host.invalid`) marks every port **Filtered** in ~30 ms. No "Unknown host" error is shown. |
-| B3 | High | WHOIS IP | **Every IPv6 lookup fails** with `400 (Bad Request)`. |
-| B4 | Medium | Port Checker | Closed ports usually show as **Filtered** with the default 2 s timeout. |
+| B2 | ✅ Fixed | Port Checker | An unresolvable host (e.g. `no-such-host.invalid`) marks every port **Filtered** in ~30 ms. No "Unknown host" error is shown. |
+| B3 | ✅ Fixed | WHOIS IP | **Every IPv6 lookup fails** with `400 (Bad Request)`. |
+| B4 | ✅ Fixed | Port Checker | Closed ports usually show as **Filtered** with the default 2 s timeout. |
 | B5 | Decision | Scope | **F6 Background monitoring + alerts** is not built (P1 plan tasks 6.1–6.4 are still ☐). Either build it or move it to v1.1. |
 | B6 | Review risk | Startup | On first run and on every update, the app opens the CPU ZX Pro Store page and a random tool URL by itself, and uploads device info. |
 
@@ -38,7 +38,7 @@ Details and fixes are in §4.
 
 ## 3. Results by tab
 
-Totals: **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures are covered by B2 and B3. All 3 warnings are explained below as either by design or caused by the network.
+Totals (first run): **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures were B2–B4 and now pass (§6). All 3 warnings are explained below as either by design or caused by the network.
 
 ### 3.1 Build
 
@@ -134,8 +134,8 @@ Totals: **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures are covered by B2
 |---|---|---|
 | google.com 80 / 443 | ✅ PASS | Open (112 / 81 ms) |
 | Non-listening ports | ✅ PASS | 22 and 8081 Filtered (dropped by firewall) |
-| Closed port (127.0.0.1:1) | ❌ FAIL → **B4** | Shown as Filtered. Windows takes ~2.1 s to report a refusal (measured), which is longer than the timeout. |
-| Unknown host | ❌ FAIL → **B2** | Every port Filtered in 33 ms and no error toast |
+| Closed port (127.0.0.1:1) | ✅ PASS (after fix) | Was Filtered at 1–2 s because Windows takes ~2.1 s to report a refusal. Closed at the new 3 s default (**B4**). |
+| Unknown host | ✅ PASS (after fix) | Was every port Filtered in 33 ms. Now one "Unknown host: …" error toast (**B2**). |
 | 1024-port scan (localhost) | ✅ PASS | 1024 results in 0.7 s, 5 open |
 | UI (1280 / 760) | ✅ PASS | |
 
@@ -144,7 +144,7 @@ Totals: **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures are covered by B2
 | Check | Result | Notes |
 |---|---|---|
 | IPv4 8.8.8.8 | ✅ PASS | 9 fields (handle, name GOGL, range, …) |
-| IPv6 2001:4860:4860::8888 | ❌ FAIL → **B3** | HTTP 400 |
+| IPv6 2001:4860:4860::8888 | ✅ PASS (after fix) | Was HTTP 400. Now 12 fields (**B3**). |
 | Domain google.com | ✅ PASS | 9 fields, registered 15 Sep 1997 |
 | ccTLD example.co.uk | ✅ PASS | 11 fields |
 | Unregistered domain | ✅ PASS | "No registration data found for …" |
@@ -187,17 +187,17 @@ Totals: **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures are covered by B2
 - **Fix:** Reserve "NetPulse — Network Diagnostic Toolkit" in Partner Center. Then use *Project → Publish → Associate App with the Store* to regenerate both files. Set the Description from `doc/App Identity.md`. Also check that the `startupTask` extension is really needed, and rename its TaskId.
 - Also: `MaxVersionTested="10.0.14393.0"` should be at least `10.0.19041.0` to match the TFM. In `NetPulseApp.csproj`, `Product` / `Description` / `PackageTags` still read "Desktop App Template".
 
-### B2 — Port Checker reports an unknown host as Filtered
-- `Service/Network/PortCheckService.cs` `ProbeAsync`: the catch-alls (`SocketException` → Filtered, bare `catch` → Filtered) swallow the DNS failure separately for every port. Because of that, the `RunError` path in `RunAsync`, which is meant for "unresolvable host, surfaces once", never runs.
-- **Fix:** Resolve the host once in `RunAsync` before the probes, using `Dns.GetHostAddressesAsync`. On failure, raise `RunError("Unknown host: …")`. Then probe the resolved `IPAddress`. As a bonus, this stops 1024 parallel DNS lookups on a full scan.
+### B2 — Port Checker reported an unknown host as Filtered · ✅ Fixed
+- **Cause:** The per-port catch-alls in `ProbeAsync` swallowed the DNS failure separately for every port, so the `RunError` path in `RunAsync` never ran.
+- **Fix:** `Service/Network/PortCheckService.cs` now resolves the host once in `RunAsync` (`ResolveAsync`, IPv4 preferred, IPv6 if that is all there is). On failure it raises a single `RunError("Unknown host: …")`. Every probe then connects to the resolved `IPAddress`, which also removes the 1024 parallel DNS lookups a full scan used to make.
 
-### B3 — WHOIS fails for every IPv6 address
-- `Service/Network/WhoisService.cs`: `Uri.EscapeDataString(target)` turns `:` into `%3A`, and rdap.org answers 400. Verified: the escaped URL returns 400, the raw `https://rdap.org/ip/2001:4860:4860::8888` returns 200.
-- **Fix:** For IP targets, use the normalised `IPAddress.ToString()` without escaping. Keep the escaping for domains.
+### B3 — WHOIS failed for every IPv6 address · ✅ Fixed
+- **Cause:** `Uri.EscapeDataString(target)` turned `:` into `%3A`, and rdap.org answers that with 400.
+- **Fix:** `Service/Network/WhoisService.cs` puts IP targets into the URL unescaped. The address is first rebuilt from its bytes, which normalises it and drops any `%scope` suffix. Domains are still escaped.
 
-### B4 — Closed ports show as Filtered
-- Windows retries the SYN after a RST, so a refused connect takes ~2 s (measured 2089 ms on loopback). The page's default timeout is 2 s (`PortCheckerControl.cs:116`, `SelectedIndex = 1`), and the 1 s option always loses.
-- **Fix:** Make 3 s the default and drop the 1 s option. Or keep the options and explain in the page tooltip that "Filtered" can also mean "closed but slow to refuse".
+### B4 — Closed ports showed as Filtered · ✅ Fixed
+- **Cause:** Windows retries the SYN after a RST, so a refused connect takes ~2 s (2089 ms measured). That matched the old 2 s default, and the 1 s option always lost.
+- **Fix:** `UserControls/Pages/PortCheckerControl.cs` now offers **3 s (default) and 5 s**. The 1 s and 2 s options are gone. The fallback in `PortCheckerControl.Run.cs` is now 3000 ms too. Filtered ports now take ~3 s to settle, but all ports are probed in parallel, so a scan still takes about 3 s.
 
 ### B5 — F6 Background monitoring not built
 - Tasks 6.1–6.4 in `MVP_P1_Task_Plan.md` are ☐. `NetworkChangeMonitor` and `SystemTrayService` exist, but there is no connection monitor, drop alerts, outage log, or Settings toggles.
@@ -222,6 +222,14 @@ Totals: **96 checks: 89 pass, 4 fail, 3 warn.** All 4 failures are covered by B2
 
 ---
 
-## 6. Re-test after fixes
+## 6. Re-test after fixes (2026-10-28)
 
-After B1–B4 are fixed, re-run §3.9 (Port Checker) and §3.10 (WHOIS), and rebuild the package for §5.2–5.3. The rest of the test suite does not need to run again.
+After the B2–B4 fixes I rebuilt (0 errors, no new warnings in the changed code) and re-ran the affected groups plus the full UI smoke test:
+
+| Group | Result |
+|---|---|
+| Port Checker | ✅ 5/5: 80/443 Open; 22/8081 Filtered; 127.0.0.1:1 **Closed** (2047 ms); unknown host gives **"Unknown host: no-such-host.invalid"**; 1024 ports in 0.6 s |
+| WHOIS IP | ✅ 6/6: IPv4, **IPv6 (12 fields)**, .com, .co.uk, unregistered, bad input |
+| UI smoke (11 pages × 2 widths + About) | ✅ 23/23 |
+
+**Still open:** B1 (Store identity) blocks the release. B5 and B6 need a decision. §5 lists the manual checks still to do; rebuild the MSIX package for §5.2–5.3 after B1 is fixed.

@@ -98,7 +98,7 @@ namespace NetPulseApp.UserControls.Pages
             if (_service.IsRunning)
                 return;
 
-            int timeoutMs = _timeout.SelectedItem is ToolUiFactory.LabeledValue tv ? tv.Value : 2000;
+            int timeoutMs = _timeout.SelectedItem is ToolUiFactory.LabeledValue tv ? tv.Value : 3000;
 
             _table.ClearRows();
             _open = _closed = _filtered = 0;

@@ -109,11 +109,12 @@ namespace NetPulseApp.UserControls.Pages
             var lblTimeout = ToolUiFactory.Caption("Timeout");
             lblTimeout.Location = new Point(Scale(630), Scale(24));
             _timeout = new ModernDropDown { Width = Scale(60), Location = new Point(Scale(686), Scale(17)) };
-            _timeout.Items.Add(new ToolUiFactory.LabeledValue("1 s", 1000));
-            _timeout.Items.Add(new ToolUiFactory.LabeledValue("2 s", 2000));
+            // No 1 s option and a 3 s default: Windows retries the SYN after
+            // a RST, so even a refused connect takes ~2 s to come back — any
+            // shorter and closed ports read as Filtered.
             _timeout.Items.Add(new ToolUiFactory.LabeledValue("3 s", 3000));
             _timeout.Items.Add(new ToolUiFactory.LabeledValue("5 s", 5000));
-            _timeout.SelectedIndex = 1;
+            _timeout.SelectedIndex = 0;
 
             _check = ToolUiFactory.AccentButton("Check", IconChar.Plug, themeManager.CurrentTheme.AccentColor);
             _check.Size = new Size(Scale(92), Scale(34));

@@ -1,5 +1,6 @@
 // Service/Network/PortCheckService.cs
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 
 namespace NetPulseApp.Service.Network
@@ -58,9 +59,14 @@ namespace NetPulseApp.Service.Network
             bool any = false;
             try
             {
+                // Resolve once, up front: a bad host is one error, not every
+                // port silently reading Filtered (and not one DNS lookup per
+                // port on a 1024-port scan).
+                var address = await ResolveAsync(host, token);
+
                 // Probes run in parallel — a 10-port list at 3s worst case
                 // still finishes in ~3s, not 30s.
-                var tasks = ports.Select(port => ProbeAsync(host, port, timeoutMs, token)).ToArray();
+                var tasks = ports.Select(port => ProbeAsync(address, port, timeoutMs, token)).ToArray();
                 var results = await Task.WhenAll(tasks);
                 foreach (var result in results)
                 {
@@ -86,22 +92,41 @@ namespace NetPulseApp.Service.Network
             }
         }
 
+        /// <summary>First IPv4 address for the host (IPv6 if it has none).
+        /// Throws "Unknown host" when it doesn't resolve.</summary>
+        private static async Task<IPAddress> ResolveAsync(string host, CancellationToken token)
+        {
+            IPAddress[] addresses;
+            try
+            {
+                addresses = await Dns.GetHostAddressesAsync(host, token);
+            }
+            catch (SocketException)
+            {
+                throw new InvalidOperationException($"Unknown host: {host}");
+            }
+
+            return addresses.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork)
+                ?? addresses.FirstOrDefault()
+                ?? throw new InvalidOperationException($"Unknown host: {host}");
+        }
+
         /// <summary>Null when cancelled before the probe settled.</summary>
         private static async Task<PortCheckResult> ProbeAsync(
-            string host, int port, int timeoutMs, CancellationToken token)
+            IPAddress address, int port, int timeoutMs, CancellationToken token)
         {
             var clock = Stopwatch.StartNew();
             var result = new PortCheckResult { Port = port };
 
             try
             {
-                using var client = new TcpClient();
+                using var client = new TcpClient(address.AddressFamily);
                 // ConnectAsync returns a ValueTask here, so timeout via a
                 // linked token (CancelAfter) instead of Task.WhenAny.
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token);
                 timeoutCts.CancelAfter(timeoutMs);
 
-                await client.ConnectAsync(host, port, timeoutCts.Token);
+                await client.ConnectAsync(address, port, timeoutCts.Token);
                 result.Status = "Open";
             }
             catch (OperationCanceledException) when (!token.IsCancellationRequested)
