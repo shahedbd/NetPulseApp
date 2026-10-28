@@ -7,6 +7,24 @@
 - Preserve existing behavior unless the task requires otherwise.
 - Keep responses concise and report only important changes, affected files, and caveats.
 ********************************************************************************************************
+D3	Add a "Send anonymous install info" opt-out (default On)?	Yes, it matches the privacy-policy disclosure
+-remove this feature. 
+
+
+Now how can we improve setting tab? 
+We can follow this project pattern:
+G:\src\MS_Store_App\NetSpeedMeterPlus\NetSpeedMeterPlus
+
+
+Desegn a UI layout first using ASCII charecters.
+
+Write doc here:
+G:\src\MS_Store_App\NetPulseApp\doc\MVP_Release_plan
+
+
+
+
+
 Now fix dark mode issues in tabs:
 -Ping
 -Traceoute
